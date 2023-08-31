@@ -2,7 +2,8 @@ const { Router } = require('express');
 const {
     getUsers,
     createUser,
-    loginUser
+    loginUser,
+    refreshAccessToken,
 } = require('../controllers/userController');
 const { verify } = require('../middlewares/verifyToken');
 const router = Router();
@@ -11,6 +12,6 @@ const router = Router();
 router.get('/users', verify, getUsers);
 router.post('/signup', createUser);
 router.post('/login', loginUser);
-
+router.post('/refresh', refreshAccessToken);
 
 module.exports = router;
