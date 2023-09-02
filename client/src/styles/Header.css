@@ -1,0 +1,10 @@
+.Header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: royalblue;
+}
+
+.Header__Links {
+    padding: 10px;
+}

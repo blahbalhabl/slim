@@ -1,30 +1,26 @@
-import { useState } from 'react';
-import { AppBar, Box, Tab, Tabs, Toolbar, Typography } from '@mui/material';
-import Login from '../pages/Login';
-import Signup from '../pages/Signup';
+import { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import AuthContext from '../context/AuthContext';
+import '../styles/Header.css'
 
 const Header = () => {
-    const [value, setValue] = useState();
+    const {user, userLogout} = useContext(AuthContext);
 
   return (
-    <div>
-        <AppBar position='sticky'>
-            <Toolbar>
-                <Typography variant="h3" >SLIM</Typography>
-                <Box sx={{ marginLeft: 'auto' }}>
-                    <Tabs
-                        onChange={(e, val) => setValue(val)} 
-                        value={value} 
-                        textColor='inherit'
-                        indicatorColor='secondary'
-                    >
-                        <Tab to='/login' LinkComponent={Link} label='LOGIN' />
-                        <Tab to='/signup' LinkComponent={Link} label='SIGNUP' />
-                    </Tabs>
-                </Box>
-            </Toolbar>
-        </AppBar>
+    <div className='Header'>
+        <h3>SLIM</h3>
+        <div className="Header__Links">
+            <Link to='/'>DASHBOARD</Link>
+            {user ? (
+                <button onClick={userLogout}>LOGOUT</button>
+            ) : (
+            <> 
+                <Link to='/login'>LOGIN</Link>
+                <Link to='/signup'>SIGNUP</Link>
+            </>)}
+            
+            {user && <p>Hello {user.name}, {user.role}</p>}
+        </div>
     </div>
   )
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+// import axiosInstance from '../hooks/useAxiosPrivate';
 import { baseURL } from '../utils/constants';
 
 axios.defaults.withCredentials = true;
@@ -15,7 +16,6 @@ const Dashboard = () => {
         withCredentials: true,
       });
       const data = res.data;
-      console.log(data)
       return data;
     } catch (err) {
       setError("An error occurred while fetching user data.");
@@ -44,6 +44,7 @@ const Dashboard = () => {
 
   return (
     <div>
+      <button onClick={sendRequest}>Show Users</button>
       <h1>User List</h1>
       <ul>
         {users.map((user) => (

@@ -7,6 +7,7 @@ const createAccessToken = (user) => {
     return jwt.sign(
         {
             id: user._id,
+            name: user.username,
             role: user.role
         },
         process.env.ACCESS_SECRET,
@@ -18,6 +19,7 @@ const createRefreshToken = (user) => {
     return jwt.sign(
         {
             id: user._id,
+            name: user.username,
             role: user.role
         },
         process.env.REFRESH_SECRET,
@@ -120,7 +122,7 @@ const loginUser = async (req, res) => {
             sameSite: 'lax'
         });
 
-        return res.status(200).json({ user: user, token: accessToken, msg: 'Successfully Logged In' });
+        return res.status(200).json({ user: user.username, role: user.role, token: accessToken, msg: 'Successfully Logged In' });
     } catch (err) {
         return res.status(401).json({ err, msg: 'User does not exist' });
     }
@@ -136,9 +138,30 @@ const getUsers = async (req, res) => {
     }
 };
 
+const logoutUser = (req, res) => {
+    try {
+        res.cookie('token', '', {
+            path: '/api',
+            expires: new Date(0),
+            httpOnly: true,
+            sameSite: 'lax'
+        });
+        res.cookie('refresh', '', {
+            path: '/api',
+            expires: new Date(0),
+            httpOnly: true,
+            sameSite: 'lax'
+        });
+        res.status(200).json({msg: 'Logged Out'})
+    } catch (err) {
+        res.status(400).json(err)
+    }
+}
+
 module.exports = {
     getUsers,
     createUser,
     loginUser,
     refreshAccessToken,
+    logoutUser,
 }
