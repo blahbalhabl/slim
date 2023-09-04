@@ -1,13 +1,13 @@
 import { 
   Routes, 
-  Route,
-  Navigate } from "react-router-dom"
-import PrivateRoute from "./utils/PrivateRoute"
+  Route, } from "react-router-dom"
+import RequireAuth from "./components/RequireAuth"
 import { AuthProvider } from "./context/AuthContext"
 import Header from "./components/Header"
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import Dashboard from "./pages/Dashboard"
+import Unauthorized from "./pages/Unauthorized"
 
 function App() {
   return (
@@ -17,12 +17,12 @@ function App() {
         {/* Public routes */}
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
-
-        {/* Private route */}
-        <Route
-          path="/" exact
-          element={<PrivateRoute element={<Dashboard />} />}
-        />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        
+        {/* Private routes */}
+        <Route element={<RequireAuth allowedRoles={['admin']}/>}>
+          <Route path="/" exact element={<Dashboard />}/>
+        </Route>
       </Routes>
     </AuthProvider>
   );
