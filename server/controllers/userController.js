@@ -32,7 +32,7 @@ const refreshAccessToken = async (req, res) => {
   const refreshToken = req.cookies.refresh;
 
   if (!refreshToken) {
-    return res.status(400).json({ msg: "Refresh token missing" });
+    return res.status(403).json({ msg: "Refresh token missing" });
   }
 
   try {
@@ -47,14 +47,14 @@ const refreshAccessToken = async (req, res) => {
     const newAccessToken = createAccessToken(user);
 
     // Send Access Token through httpOnly cookie
-    res.cookie("token", newAccessToken, {
-      path: "/api",
-      expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES), // last digit indicates seconds
-      httpOnly: true,
-      sameSite: "lax",
-    });
+    // res.cookie("token", newAccessToken, {
+    //   path: "/api",
+    //   expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES), // last digit indicates seconds
+    //   httpOnly: true,
+    //   sameSite: "lax",
+    // });
 
-    return res.status(200).json({ accessToken: newAccessToken });
+    return res.status(200).json({ name: user.username, role: user.role, token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
   }
@@ -106,13 +106,18 @@ const loginUser = async (req, res) => {
     const accessToken = createAccessToken(user);
     const refreshToken = createRefreshToken(user);
 
+    // Save Refresh Token in Database
+    user.refresh = refreshToken;
+    const result = await user.save();
+    console.log(result);
+
     // Send Access Token through httpOnly cookie
-    res.cookie("token", accessToken, {
-      path: "/api",
-      expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES),
-      httpOnly: true,
-      sameSite: "lax",
-    });
+    // res.cookie("token", accessToken, {
+    //   path: "/api",
+    //   expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES),
+    //   httpOnly: true,
+    //   sameSite: "lax",
+    // });
 
     // Send Refresh Token through httpOnly cookie
     res.cookie("refresh", refreshToken, {
@@ -125,11 +130,9 @@ const loginUser = async (req, res) => {
     return res
       .status(200)
       .json({
-        user: user.username,
+        name: user.username,
         role: user.role,
         token: accessToken,
-        refresh: refreshToken,
-        msg: "Successfully Logged In",
       });
   } catch (err) {
     return res.status(400).json({ err, msg: "User does not exist" });
@@ -142,24 +145,39 @@ const getUsers = async (req, res) => {
     const users = await UserModel.find().lean().exec();
     res.status(200).json(users);
   } catch (err) {
-    res.status(400).json(err);
+    res.status(400).json({err: err});
   }
 };
 
-const logoutUser = (req, res) => {
+const logoutUser = async (req, res) => {
+
+  const refresh = req.cookies.refresh;
+  if(!refresh) return res.status(200).json({msg: "No Cookies Found"});
+
+  const foundUser = await UserModel.findOne({ refresh }).exec();
+  if( !foundUser ) {
+    res.clearCookie('refresh', {httpOnly: true, sameSite: "lax"})
+    return res.status(200).json({msg: "No refresh Token Found"});
+  }
+
+  // Delete Refresh Token in DB
   try {
-    res.cookie("token", "", {
-      path: "/api",
-      expires: new Date(0),
-      httpOnly: true,
-      sameSite: "lax",
-    });
-    res.cookie("refresh", "", {
-      path: "/api",
-      expires: new Date(0),
-      httpOnly: true,
-      sameSite: "lax",
-    });
+    foundUser.refresh = '';
+    const result = await foundUser.save();
+    console.log(result);
+    res.clearCookie('refresh', {path: '/api', httpOnly: true, sameSite: 'lax'});
+  //   res.cookie("token", "", {
+  //     path: "/api",
+  //     expires: new Date(0),
+  //     httpOnly: true,
+  //     sameSite: "lax",
+  //   });
+    // res.cookie("refresh", null, {
+    //   path: "/api",
+    //   expires: new Date(0),
+    //   httpOnly: true,
+    //   sameSite: "lax",
+    // });
     res.status(200).json({ msg: "Logged Out" });
   } catch (err) {
     res.status(400).json(err);

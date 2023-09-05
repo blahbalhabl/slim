@@ -3,15 +3,17 @@ const jwt = require("jsonwebtoken");
 
 const verify = (req, res, next) => {
   // Get Access Token from httpOnly cookie
-  const token = req.cookies.token;
+  const accessHeader = req.headers.authorization;
 
-  if (!token) {
-    return res.status(404).json("No access token found");
+  if (!accessHeader) {
+    return res.status(401).json("No access token found");
   }
+
+  const token = accessHeader.split(" ")[1];
 
   jwt.verify(token, process.env.ACCESS_SECRET, (err, payload) => {
     if (err) {
-      return res.status(400).json("Invalid Token");
+      return res.status(401).json("Invalid Token");
     }
     req.id = payload.id;
     next();

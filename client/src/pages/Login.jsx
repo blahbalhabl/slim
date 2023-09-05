@@ -1,9 +1,14 @@
 import { Box, Button, TextField, Typography } from "@mui/material";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useEffect } from "react";
 
 const Login = () => {
-  const { userLogin, handleChange } = useAuth();
+  const { 
+    userLogin, 
+    handleChange, 
+    persist, 
+    setPersist } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from.pathname || '/';
@@ -14,6 +19,14 @@ const Login = () => {
     userLogin()
     .then(() => navigate(from, { replace: true }));
   };
+
+  const togglePersist = () => {
+    setPersist(prev => !prev);
+  }
+
+  useEffect(() => {
+    localStorage.setItem('persist', persist);
+  },[persist]);
 
   return (
     <div>
@@ -46,6 +59,15 @@ const Login = () => {
           <Button variant="contained" type="submit">
             Login
           </Button>
+          <div className="Login__Remember">
+            <input 
+              type="checkbox"
+              id="remember"
+              onChange={togglePersist}
+              checked={persist}
+            />
+            <label htmlFor="persist">Trust This Device</label>
+          </div>
         </Box>
       </form>
     </div>

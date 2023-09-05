@@ -1,18 +1,13 @@
 import axios from "../api/axios";
 import { createContext, useState } from "react";
-import jwt_decode from "jwt-decode";
-import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const navigate = useNavigate();
 
-  const [auth, setAuth] = useState({});
-  const [refresh, setRefresh] = useState({});
-  const [user, setUser] = useState(() =>
-    JSON.parse(sessionStorage.getItem("user") || null)
-  );
+  const [auth, setAuth] = useState();
+  const [persist, setPersist] = useState(
+    JSON.parse(localStorage.getItem('persist')) || false);
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
@@ -38,10 +33,7 @@ export const AuthProvider = ({ children }) => {
       });
       if (res.status === 200) {
         const data = await res.data;
-        setAuth(data.token);
-        setRefresh(data.refresh);
-        setUser(jwt_decode(data.token));
-        console.log('Login Success');
+        setAuth(data);
         return data;
       } else {
         console.log("Login failed", res.statusText);
@@ -50,30 +42,20 @@ export const AuthProvider = ({ children }) => {
       console.log("Error during login", err);
     }
   };
-  // Save user to session storage for persistent login
-  sessionStorage.setItem("user", JSON.stringify(user));
   
-  const userLogout = () => {
-    setUser(null);
-    setAuth(null);
-    setRefresh(null);
-    sessionStorage.removeItem("user");
-    navigate("/login");
-  };
-
   const contextData = {
     userLogin: userLogin,
     handleChange: handleChange,
-    userLogout: userLogout,
-    setUser:setUser,
     setAuth:setAuth,
-    user: user,
+    setPersist: setPersist,
     auth: auth,
-    refresh: refresh,
+    persist: persist,
   };
 
   return (
-    <AuthContext.Provider value={contextData}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={contextData}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

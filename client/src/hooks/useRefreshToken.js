@@ -9,12 +9,17 @@ const useRefreshToken = () => {
       withCredentials: true
     });
     setAuth(prev => {
-      console.log(res.data);
-      return { ...prev, token: res.data}
+      console.log(prev)
+      console.log(res.data.token)
+      return {
+        ...prev,
+        name: res.data.name,
+        role: res.data.role,
+        token: res.data.token, }
     });
-    return res.data.accessToken;
+    return res.data.token;
   }
   return refresh;
 }
 
-export default useRefreshToken
+export default useRefreshToken;
