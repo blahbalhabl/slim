@@ -1,0 +1,34 @@
+.Sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px 0px 10px 0px;
+  background-color: gainsboro;
+  width: 15%;
+  height: auto;
+}
+
+.Sidebar__Buttons {
+  margin-top: 20px;
+}
+
+.Sidebar__Button {
+  display: inline-block;
+  text-decoration: none;
+  color: black;
+  width: 100%;
+  padding: 10px 0px 10px 0px;
+  border-top: 1px solid black;
+  transition: ease 200ms;
+}
+
+.Sidebar__Button > p {
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  max-height: 100%;
+}
+
+.Sidebar__Button:hover {
+  background-color: darkgray;
+}

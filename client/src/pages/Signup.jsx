@@ -1,7 +1,9 @@
-import { Box, Button, TextField, Typography } from "@mui/material";
+
 import { useState } from "react";
 import axios from "../api/axios";
 import { useNavigate } from "react-router-dom";
+
+import '../styles/Signup.css'
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -32,7 +34,8 @@ const Signup = () => {
       password: inputs.password,
       role: inputs.role,
     };
-    const res = await axios.post('/signup', userData).catch((err) => {
+    const res = await axios.post('/signup', userData)
+    .catch((err) => {
       console.log(err);
     });
     const data = await res.data;
@@ -40,55 +43,47 @@ const Signup = () => {
   };
 
   return (
-    <div>
+    <div className="Signup">
       <form onSubmit={handleSubmit}>
-        <Box
-          marginX="auto"
-          width={300}
-          display="flex"
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Typography variant="h4">Signup</Typography>
-          <TextField
-            name="email"
-            onChange={handleChange}
-            value={inputs.email}
+        <div className="Signup__Container">
+          <h4>Signup</h4>
+          <input 
             type="email"
-            variant="outlined"
-            placeholder="Email"
-            margin="normal"
-          />
-          <TextField
+            name="email"
+            value={inputs.email}
+            onChange={handleChange}
+            placeholder="Email" 
+            required
+            />
+            <input 
+            type="text"
             name="username"
-            onChange={handleChange}
             value={inputs.username}
-            variant="outlined"
+            onChange={handleChange}
             placeholder="Username"
-            margin="normal"
-          />
-          <TextField
-            name="password"
-            onChange={handleChange}
-            value={inputs.password}
+            required
+            />
+            <input 
             type="password"
-            variant="outlined"
-            placeholder="Password"
-            margin="normal"
-          />
-          <TextField
-            name="role"
+            name="password"
+            value={inputs.password}
             onChange={handleChange}
+            placeholder="Password"
+            required
+            />
+            <input 
+            type="text"
+            name="role"
             value={inputs.role}
-            variant="outlined"
+            onChange={handleChange}
             placeholder="Role"
-            margin="normal"
-          />
-          <Button variant="contained" type="submit">
-            Signup
-          </Button>
-        </Box>
+            required 
+            />
+            <button className="Signup__Button"
+              type="submit" 
+              > Signup 
+            </button>
+        </div>
       </form>
     </div>
   );

@@ -46,14 +46,6 @@ const refreshAccessToken = async (req, res) => {
     // Generate a new access token
     const newAccessToken = createAccessToken(user);
 
-    // Send Access Token through httpOnly cookie
-    // res.cookie("token", newAccessToken, {
-    //   path: "/api",
-    //   expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES), // last digit indicates seconds
-    //   httpOnly: true,
-    //   sameSite: "lax",
-    // });
-
     return res.status(200).json({ name: user.username, role: user.role, token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
@@ -61,7 +53,7 @@ const refreshAccessToken = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const { email, username, password, role } = req.body;
+  const { email, username, password, role } = req.body; 
 
   try {
     // Check if Email Already Exists
@@ -109,15 +101,6 @@ const loginUser = async (req, res) => {
     // Save Refresh Token in Database
     user.refresh = refreshToken;
     const result = await user.save();
-    console.log(result);
-
-    // Send Access Token through httpOnly cookie
-    // res.cookie("token", accessToken, {
-    //   path: "/api",
-    //   expires: new Date(Date.now() + 1000 * process.env.ACCESS_EXPIRES),
-    //   httpOnly: true,
-    //   sameSite: "lax",
-    // });
 
     // Send Refresh Token through httpOnly cookie
     res.cookie("refresh", refreshToken, {
@@ -164,20 +147,8 @@ const logoutUser = async (req, res) => {
   try {
     foundUser.refresh = '';
     const result = await foundUser.save();
-    console.log(result);
+    // Clear http Only refresh cookie
     res.clearCookie('refresh', {path: '/api', httpOnly: true, sameSite: 'lax'});
-  //   res.cookie("token", "", {
-  //     path: "/api",
-  //     expires: new Date(0),
-  //     httpOnly: true,
-  //     sameSite: "lax",
-  //   });
-    // res.cookie("refresh", null, {
-    //   path: "/api",
-    //   expires: new Date(0),
-    //   httpOnly: true,
-    //   sameSite: "lax",
-    // });
     res.status(200).json({ msg: "Logged Out" });
   } catch (err) {
     res.status(400).json(err);

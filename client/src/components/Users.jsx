@@ -48,14 +48,14 @@ const Users = () => {
   }
 
   return (
-    <div>
-      <button onClick={sendRequest}>Show Users</button>
+    <div className="Users">
       <h1>User List</h1>
       <ul>
         {users.map((user) => (
           <li key={user._id}>{user.username}</li>
         ))}
       </ul>
+      <button onClick={sendRequest}>Show Users</button>
       <button onClick={refresh}>Refresh</button>
     </div>
   );

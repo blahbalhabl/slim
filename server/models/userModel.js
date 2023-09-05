@@ -23,6 +23,23 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  image: {
+    type: String,
+    required: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now(),
+  },
+  updatedAt: {
+    type: Date,
+    default: null,
+  },
+});
+
+userSchema.pre("save", function (next) {
+  this.updatedAt = new Date();
+  next();
 });
 
 module.exports = mongoose.model("Users", userSchema);

@@ -15,13 +15,14 @@ const Header = () => {
 
   return (
     <div className="Header">
-      <h3>SLIM</h3>
-      <div className="Header__Links">
+      <h3>SLIM: Sanggunian Legislative Information Management</h3>
+      <div className="Header__Info">
         {auth ? (
           <>
+            <p>
+              Hello {auth.name}, {auth.role}
+            </p>
             <button onClick={signOut}>LOGOUT</button>
-            <span> | </span>
-            <Link to="/">DASHBOARD</Link>
           </>
         ) : (
           <>
@@ -29,16 +30,6 @@ const Header = () => {
             <span> | </span>
             <Link to="/signup">SIGNUP</Link>
           </>
-        )}
-        <span> | </span>
-        {auth && auth.role === 'admin' && (
-          <Link to="/admin">ADMIN PAGE</Link>
-        )}
-
-        {auth && (
-          <p>
-            Hello {auth.name}, {auth.role}
-          </p>
         )}
       </div>
     </div>
