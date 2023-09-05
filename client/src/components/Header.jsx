@@ -1,32 +1,39 @@
-import { useState } from 'react';
-import { AppBar, Box, Tab, Tabs, Toolbar, Typography } from '@mui/material';
-import Login from '../pages/Login';
-import Signup from '../pages/Signup';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import useLogout from "../hooks/useLogout";
+import "../styles/Header.css";
 
 const Header = () => {
-    const [value, setValue] = useState();
+  const navigate = useNavigate();
+  const logout = useLogout();
+  const { auth } = useAuth();
+
+  const signOut = async () => {
+    await logout();
+    navigate('/login');
+  }
 
   return (
-    <div>
-        <AppBar position='sticky'>
-            <Toolbar>
-                <Typography variant="h3" >SLIM</Typography>
-                <Box sx={{ marginLeft: 'auto' }}>
-                    <Tabs
-                        onChange={(e, val) => setValue(val)} 
-                        value={value} 
-                        textColor='inherit'
-                        indicatorColor='secondary'
-                    >
-                        <Tab to='/login' LinkComponent={Link} label='LOGIN' />
-                        <Tab to='/signup' LinkComponent={Link} label='SIGNUP' />
-                    </Tabs>
-                </Box>
-            </Toolbar>
-        </AppBar>
+    <div className="Header">
+      <h3>SLIM: Sanggunian Legislative Information Management</h3>
+      <div className="Header__Info">
+        {auth ? (
+          <>
+            <p>
+              Hello {auth.name}, {auth.role}
+            </p>
+            <button onClick={signOut}>LOGOUT</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">LOGIN</Link>
+            <span> | </span>
+            <Link to="/signup">SIGNUP</Link>
+          </>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

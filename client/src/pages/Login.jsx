@@ -1,76 +1,84 @@
-import { Box, Button, TextField, Typography } from "@mui/material"
-import { useState } from "react"
-import axios from 'axios'
-import { baseURL } from '../utils/constants'
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useLocation } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import { useState, useEffect } from "react";
+import '../styles/Login.css'
 
 const Login = () => {
-    
-    const navigate = useNavigate();
-    const [inputs, setInputs] = useState({
-        email: '',
-        password: '',
-    });
+  const [visible, setVisible] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setInputs((prev) => {
-          return { ...prev, [name]: value }
-        });
-        console.log(inputs)
-    }
+  const inputType = visible ? "text" : "password";
+  const toggleIcon = visible ? "hide" : "show";
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        //Send Request to Backend API then navigate to Login
-        userLogin().then(() => navigate('/dashboard'));
-    }
+  const { 
+    userLogin, 
+    handleChange, 
+    persist, 
+    setPersist,
+    loginError } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from.pathname || '/';
+  // const [inputType, toggleIcon] = usePasswordToggle();
 
-    const userLogin = async () => {
-        const userData = {
-            email: inputs.email,
-            password: inputs.password,
-        }
-        try {
-            const res = await axios
-            .post(`${baseURL}/login`, userData, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        })
-            if (res.status === 200) {
-                const data = await res.data;
-                return data;
-            } else {
-                console.log('Login failed', res.statusText);
-            }
-        } catch (err) {
-            console.log('Error during login', err);
-        }
-        
-        
-        
-    }
-    
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    //Send Request to Backend API then navigate to Login
+    userLogin()
+    .then(() => navigate(from, { replace: true }));
+  };
+
+  const togglePersist = () => {
+    setPersist(prev => !prev);
+  }
+
+  useEffect(() => {
+    localStorage.setItem('persist', persist);
+  },[persist]);
+
   return (
-    <div>
-        <form onSubmit={handleSubmit}>
-            <Box 
-                marginX='auto' 
-                width={300} 
-                display='flex' 
-                flexDirection='column'
-                justifyContent='center'
-                alignItems='center'
-            >
-                <Typography variant="h4">Login</Typography>
-                <TextField name="email" onChange={handleChange} value={inputs.email} type="email" variant='outlined' placeholder="Email" margin="normal" />
-                <TextField name="password" onChange={handleChange} value={inputs.password} type="password" variant='outlined' placeholder="Password" margin="normal"/>
-                <Button variant="contained" type="submit">Login</Button>
-            </Box>
-        </form>
+    <div className="Login">
+      <form onSubmit={handleSubmit}>
+        <div className="Login__Container">
+          <h4>Login</h4>
+          <input 
+            type="email"
+            name="email"
+            onChange={handleChange}
+            placeholder="Email"
+            required
+          />
+          <input 
+            type={inputType}
+            name="password"
+            onChange={handleChange}
+            placeholder="Password" 
+            required
+          />
+          <span
+            className="Login__Password__Toggle"
+            onClick={() => setVisible(visible => !visible)}>
+              {toggleIcon}
+          </span>
+          <br />
+          <button
+            className="Login__Button"
+            type="submit" 
+            > Login
+          </button>
+          <div className="Login__Remember">
+            <input 
+              type="checkbox"
+              id="remember"
+              onChange={togglePersist}
+              checked={persist}
+            />
+            <label htmlFor="persist">Trust This Device</label>
+            {loginError && <p className="Login__Error__Message">{loginError}</p>}
+          </div>
+        </div>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

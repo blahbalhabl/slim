@@ -1,0 +1,57 @@
+.Login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+}
+
+.Login__Container {
+  position: relative;
+  background-color: gainsboro;
+  margin: auto;
+  padding: 30px;
+  height: max-content;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 15px;
+}
+
+.Login__Container > input {
+  margin: 10px 0px 10px 0px;
+  width: 100%;
+  height: 50px;
+  border-style: none;
+  border-radius: 5px;
+}
+
+.Login__Container > input:focus {
+  outline: none;
+}
+
+.Login__Button {
+  background-color: blue;
+}
+
+.Login__Password__Toggle {
+  position: absolute;
+  top: 53%;
+  right: 8%;
+  z-index: 1000;
+  background-color: gainsboro;
+  cursor: pointer;
+}
+
+.Login__Error__Message {
+  text-align: center;
+  margin-top: 10px;
+  padding: 10px;
+  width: 100%;
+  height: max-content;
+  border-radius: 5px;
+  background-color: orangered;
+}
