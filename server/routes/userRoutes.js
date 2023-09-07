@@ -10,12 +10,12 @@ const { verify } = require("../middlewares/verifyToken");
 const router = Router();
 
 // General Routes
-router.post("/signup", createUser);
 router.post("/login", loginUser);
 router.post("/refresh", refreshAccessToken);
 router.post("/logout", logoutUser);
 
 // Protected Routes
+router.post("/signup", verify, createUser);
 router.get("/users", verify, getUsers);
 
 module.exports = router;

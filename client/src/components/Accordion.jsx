@@ -1,6 +1,6 @@
 import { useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperclip } from '@fortawesome/free-solid-svg-icons'
+import { icons } from "../utils/Icons"
 import '../styles/Accordion.css'
 
 const Accordion = ({ data }) => {
@@ -24,7 +24,7 @@ const Accordion = ({ data }) => {
 						onClick={() => toggleAccordion(i)}
 					>
 						<div className="Accordion__Title"	>
-							<FontAwesomeIcon icon={faPaperclip} />
+							<FontAwesomeIcon icon={icons.paperclip} />
 							<p className="Accordion__Text">{item.title}</p>
 							<span className="Accordion__Icon">
 								{selected === i ? '<' : '+'}

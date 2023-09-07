@@ -1,14 +1,12 @@
-import { useNavigate } from "react-router-dom"
+import '../styles/Unauthorized.css';
 
 const Unauthorized = () => {
-  const navigate = useNavigate();
 
-  const goBack = () => navigate(-1);
   return (
-    <>
-    <div>Unauthorized</div>
-    <button onClick={goBack}>BACK</button>
-    </>
+    <div 
+      className="Unauthorized">
+        <p>Unauthorized</p>
+    </div>
   )
 }
 

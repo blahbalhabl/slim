@@ -7,8 +7,7 @@ const Dashboard = () => {
       <p>Dashboard</p>
       <Users />
     </div>
-    
   )
-}
+};
 
 export default Dashboard

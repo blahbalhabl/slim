@@ -1,40 +1,16 @@
 import useAuth from '../hooks/useAuth'
 import { Link } from 'react-router-dom'
 import Accordion from './Accordion';
+import { sidebarAccordion } from '../utils/sidebarAccordion';
+import { roles } from '../utils/userRoles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { 
-  faChartSimple,
-  faLock,
-  faFile,
-  faPencil } from '@fortawesome/free-solid-svg-icons'
+import { icons } from '../utils/Icons';
 import '../styles/Sidebar.css'
 
 const Sidebar = () => {
   const { auth } = useAuth();
-
-  const sidebarAccordion = [
-    {
-      title: 'Records',
-      contents: [
-        {
-          title:  <Link
-                    className='Sidebar__Button'
-                    to={'/records/ordinances'}>
-                      <FontAwesomeIcon icon={faPencil} />
-                      <p>List of Ordinances</p>
-                  </Link>
-        },
-        {
-          title:  <Link
-                    className='Sidebar__Button'
-                    to={'/records/ordinances/enacted'}>
-                      <FontAwesomeIcon icon={faPencil} />
-                      <p>List of Enacted Ordinances</p>
-                  </Link>
-        }
-      ]
-    },
-  ];
+  const role = roles.role;
+  const level = roles.level;
 
   return auth ? (
     <div className='Sidebar'>
@@ -44,26 +20,33 @@ const Sidebar = () => {
           className='Sidebar__Button'
           to='/'
           > 
-            <FontAwesomeIcon icon={faChartSimple} /> 
+            <FontAwesomeIcon icon={icons.chart} /> 
             <p>Dashboard</p>
         </Link>
-        { auth && auth.role === 'admin' && (
+        { auth && auth.role === role.adn && (
         <>
-          <Accordion data={sidebarAccordion}/>
+          <Accordion data={sidebarAccordion} />
           <Link
             className='Sidebar__Button'
             to='/admin-page' 
             > 
-            <FontAwesomeIcon icon={faLock} />
+            <FontAwesomeIcon icon={icons.lock} />
               <p>Admin Page</p>
           </Link>
         </>
         )}
         <Link
           className='Sidebar__Button'
+          to='/auth/signup'
+          > 
+            <FontAwesomeIcon icon={icons.user} />
+            <p>Users</p> 
+        </Link>
+        <Link
+          className='Sidebar__Button'
           to='/random-page'
           > 
-            <FontAwesomeIcon icon={faFile} />
+            <FontAwesomeIcon icon={icons.file} />
             <p>Random Page</p> 
         </Link>
       </div>
