@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
+import Tooltip from "./Tooltip";
 import "../styles/Header.css";
 
 const Header = () => {
@@ -13,17 +14,36 @@ const Header = () => {
     navigate('/login');
   }
 
+  const headerTooltip = [
+    {
+      buttons: [
+        <button 
+          key="profile" 
+          onClick={() => {
+            navigate(`/profile/${auth.id}`)
+        }}>
+          Profile
+        </button>,
+        <button key="logout" onClick={signOut}>
+          Logout
+        </button>,
+      ],
+    },
+  ]
+
   return (
     <div className="Header">
       <h3>SLIM: Sanggunian Legislative Information Management</h3>
-      <div className="Header__Info">
+      <div className="Header__Container">
         {auth ? (
-          <>
+          <div className="Header__Info">
             <p>
               Hello {auth.name}, {auth.role}
             </p>
-            <button onClick={signOut}>LOGOUT</button>
-          </>
+            <div>
+              <Tooltip data={headerTooltip}/>
+            </div>
+          </div>
         ) : (
           <>
             <Link to="/login">LOGIN</Link>

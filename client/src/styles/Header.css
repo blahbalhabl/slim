@@ -6,6 +6,11 @@
     background-color: royalblue;
 }
 
-.Header__Info {
+.Header__Container {
     padding: 10px;
+}
+
+.Header__Info {
+    display: flex;
+    
 }

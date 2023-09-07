@@ -46,7 +46,11 @@ const refreshAccessToken = async (req, res) => {
     // Generate a new access token
     const newAccessToken = createAccessToken(user);
 
-    return res.status(200).json({ name: user.username, role: user.role, token: newAccessToken });
+    return res.status(200).json({
+      id: user.id,
+      name: user.username, 
+      role: user.role, 
+      token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
   }
@@ -113,6 +117,7 @@ const loginUser = async (req, res) => {
     return res
       .status(200)
       .json({
+        id: user._id,
         name: user.username,
         role: user.role,
         token: accessToken,

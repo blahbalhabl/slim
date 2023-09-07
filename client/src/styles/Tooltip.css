@@ -1,0 +1,22 @@
+.Tooltip {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background-color: darkblue;
+    border-radius: 5px;
+    margin-left: 10px;
+    padding: 5px;
+    color: white;
+}
+
+.Tooltip__Body {
+    background-color: white;
+    position: absolute;
+    margin: 10px;
+    right: 0;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 10px;
+    z-index: 1; 
+}
+
