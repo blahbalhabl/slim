@@ -1,0 +1,47 @@
+.Accordion {
+    display: flex;
+    flex-direction: column;
+    background-color: gainsboro;
+    border-bottom: 1px solid black;
+    padding: 10px 0px 10px 20px;
+    cursor: pointer;
+}
+
+.Accordion:hover {
+    background-color: darkgray;
+}
+
+.Accordion__Title {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    user-select: none;
+}
+
+.Accordion__Text {
+    margin-left: 10%;
+    flex-grow: 1;
+    text-align: left;
+  }
+
+.Accordion__Icon {
+    margin-left: none;
+    margin-right: 10px;
+}
+
+.Accordion__Content {
+    display: none;
+    width: 100%;
+}
+.Accordion__Content.show {
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+}
+
+.Accordion__Content.show > div {
+    width: 100%;
+}
