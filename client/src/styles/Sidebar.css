@@ -4,11 +4,12 @@
   align-items: center;
   padding: 10px 0px 10px 0px;
   background-color: gainsboro;
-  width: 15%;
+  width: 15vw;
   height: auto;
 }
 
 .Sidebar__Buttons {
+  width: 100%;
   margin-top: 20px;
 }
 
@@ -31,4 +32,33 @@
 
 .Sidebar__Button:hover {
   background-color: darkgray;
+}
+
+.Sidebar__Panels {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: aliceblue;
+  width: 100%;
+  display: none;
+}
+
+.ui.styled.accordion {
+  width: 50%;
+}
+
+.ui.styled.accordion .title {
+  cursor: pointer;
+}
+
+.ui.styled.accordion .content {
+  display: none;
+}
+
+.ui.styled.accordion .content.active {
+  display: block;
+}
+
+.ui.styled.accordion .title .icon.active {
+  transform: rotate(180deg);
 }

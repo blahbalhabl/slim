@@ -72,7 +72,7 @@ const Login = () => {
               onChange={togglePersist}
               checked={persist}
             />
-            <label htmlFor="persist">Trust This Device</label>
+            <label>Trust This Device</label>
             {loginError && <p className="Login__Error__Message">{loginError}</p>}
           </div>
         </div>
