@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import useRefreshToken from "../hooks/useRefreshTOken";
 
 const Users = () => {
   const [users, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosPrivate = useAxiosPrivate();
-  const refresh = useRefreshToken();
 
   const sendRequest = async () => {
     try {
@@ -56,7 +54,6 @@ const Users = () => {
         ))}
       </ul>
       <button onClick={sendRequest}>Show Users</button>
-      <button onClick={refresh}>Refresh</button>
     </div>
   );
 };

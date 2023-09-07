@@ -1,12 +1,12 @@
-
 import { useState } from "react";
-import axios from "../api/axios";
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 
 import '../styles/Signup.css'
 
 const Signup = () => {
   const navigate = useNavigate();
+  const axiosPrivate = useAxiosPrivate();
   const [inputs, setInputs] = useState({
     email: "",
     username: "",
@@ -24,7 +24,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     //Send Request to Backend API then navigate to Login
-    userSignup().then(() => navigate("/login"));
+    userSignup();
   };
 
   const userSignup = async () => {
@@ -34,7 +34,7 @@ const Signup = () => {
       password: inputs.password,
       role: inputs.role,
     };
-    const res = await axios.post('/signup', userData)
+    const res = await axiosPrivate.post('/signup', userData)
     .catch((err) => {
       console.log(err);
     });

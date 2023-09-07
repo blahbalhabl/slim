@@ -4,7 +4,6 @@ import {
 import RequireAuth from "./components/RequireAuth"
 import { AuthProvider } from "./context/AuthContext"
 import PersistLogin from "./components/PersistLogin"
-
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
 
@@ -17,10 +16,15 @@ import AdminPage from "./pages/AdminPage"
 import Ordinances from "./pages/Ordinances"
 import Enacted from "./pages/Enacted"
 import Profile from "./pages/Profile"
+import { roles } from "./utils/userRoles"
 
 import './App.css'
 
 function App() {
+
+const role = roles.role;
+const level = roles.level;
+
   return (
     <div className="App">
       <AuthProvider>
@@ -30,20 +34,24 @@ function App() {
         <Routes>
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
 
+          {/* Persistent Login Routes */}
           <Route element={<PersistLogin />}>
             {/* Public routes with Persistent Login */}
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/random-page" element={<RandomPage />} />
             
             {/* Private routes with Persistent Login*/}
-            <Route element={<RequireAuth allowedRoles={['admin']}/>}>
+            <Route element={<RequireAuth allowedRoles={role.adn}/>}>
               <Route path="/" element={<Dashboard />}/>
               <Route path="/profile/:userId" element={<Profile />}/>
               <Route path="/admin-page" element={<AdminPage />}/>
               <Route path="/records/ordinances" element={<Ordinances />}/>
               <Route path="/records/ordinances/enacted" element={<Enacted />}/>
+            </Route>
+            {/* Private Superadmin Routes */}
+            <Route element={<RequireAuth allowedRoles={role.spr} />}>
+              <Route path="/auth/signup" element={<Signup />} />
             </Route>
           </Route> 
         </Routes>
