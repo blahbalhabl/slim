@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 const Users = () => {
-  const [users, setUser] = useState(null);
+  const [users, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosPrivate = useAxiosPrivate();
@@ -11,7 +11,6 @@ const Users = () => {
     try {
       const res = await axiosPrivate.get('/users');
       const data = res.data;
-      console.log(res.data);
       return data;
     } catch (err) {
       setError("An error occurred while fetching user data.");

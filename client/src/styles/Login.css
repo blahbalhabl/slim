@@ -9,7 +9,7 @@
 
 .Login__Container {
   position: relative;
-  background-color: gainsboro;
+  background-color: var(--secondary-color);
   margin: auto;
   padding: 30px;
   height: max-content;
@@ -34,7 +34,7 @@
 }
 
 .Login__Button {
-  background-color: blue;
+  background-color: var(--primary-color);
 }
 
 .Login__Password__Toggle {
@@ -42,7 +42,7 @@
   top: 53%;
   right: 8%;
   z-index: 1000;
-  background-color: gainsboro;
+  background-color: var(--secondary-color);
   cursor: pointer;
 }
 
@@ -53,5 +53,5 @@
   width: 100%;
   height: max-content;
   border-radius: 5px;
-  background-color: orangered;
+  background-color: var(--error-color);
 }

@@ -1,6 +1,7 @@
 const { Router } = require("express");
 const {
   getUsers,
+  getUser,
   createUser,
   loginUser,
   refreshAccessToken,
@@ -17,5 +18,6 @@ router.post("/logout", logoutUser);
 // Protected Routes
 router.post("/signup", verify, createUser);
 router.get("/users", verify, getUsers);
+router.get("/user", verify, getUser);
 
 module.exports = router;

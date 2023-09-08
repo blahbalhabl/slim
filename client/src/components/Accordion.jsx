@@ -17,15 +17,15 @@ const Accordion = ({ data }) => {
   return (
 		<>
 			{data.map((item, i) => (
-				<div>
+				<div key={i}>
 					<div 
 						key={i} 
 						className="Accordion" 
 						onClick={() => toggleAccordion(i)}
 					>
 						<div className="Accordion__Title"	>
-							<FontAwesomeIcon icon={icons.paperclip} />
-							<p className="Accordion__Text">{item.title}</p>
+							<FontAwesomeIcon icon={icons[item.title.toLowerCase()]} />
+							<div className="Accordion__Text">{item.title}</div>
 							<span className="Accordion__Icon">
 								{selected === i ? '<' : '+'}
 							</span>
@@ -34,13 +34,13 @@ const Accordion = ({ data }) => {
 					<div
 						className={
 							selected === i
-								? 'Accordion__Content show'
+								? 'Accordion__Content active'
 								: 'Accordion__Content'
 						}
 					>
 						{item.contents.map((content, j) => (
 							<div key={j}>
-								<p>{content.title}</p>
+								<div>{content.title}</div>
 							</div>
 						))}
 					</div>

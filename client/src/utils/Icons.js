@@ -3,13 +3,21 @@ import { faPencil,
   faChartSimple,
   faLock,
   faFile,
-  faUser,} from '@fortawesome/free-solid-svg-icons';
+  faUser,
+  faCalendar,
+  faBullhorn, 
+  faScroll,
+  faCodePullRequest } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
-  pencil: faPencil,
+  records: faScroll,
   paperclip: faPaperclip,
+  calendar: faCalendar,
+  pencil: faPencil,
   chart: faChartSimple,
   lock: faLock,
   file: faFile,
   user: faUser,
+  horn: faBullhorn,
+  requests: faCodePullRequest,
 };

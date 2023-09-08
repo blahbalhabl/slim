@@ -35,7 +35,7 @@ const Header = () => {
     <div className="Header">
       <h3>SLIM: Sanggunian Legislative Information Management</h3>
       <div className="Header__Container">
-        {auth ? (
+        {auth && (
           <div className="Header__Info">
             <p>
               Hello {auth.name}, {auth.role}
@@ -44,8 +44,6 @@ const Header = () => {
               <Tooltip data={headerTooltip}/>
             </div>
           </div>
-        ) : (
-          <Link to="/login">LOGIN</Link>
         )}
       </div>
     </div>

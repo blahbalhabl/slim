@@ -24,4 +24,30 @@ export const sidebarAccordion = [
       }
     ]
   },
+  {
+    title: 'Calendar',
+    contents: [
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/announcements'}>
+                    <FontAwesomeIcon icon={icons.horn} />
+                    <p>Announcements</p>
+                </Link>
+      },
+    ]
+  },
+  {
+    title: 'Requests',
+    contents: [
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/requests'}>
+                    <FontAwesomeIcon icon={icons.horn} />
+                    <p>Requests</p>
+                </Link>
+      },
+    ]
+  },
 ];

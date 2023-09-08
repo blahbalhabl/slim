@@ -3,7 +3,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 20px;
-    background-color: royalblue;
+    background-color: var(--primary-color);
 }
 
 .Header__Container {
