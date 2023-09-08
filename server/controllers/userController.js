@@ -128,10 +128,23 @@ const loginUser = async (req, res) => {
 };
 
 const getUsers = async (req, res) => {
-  // const userId = req.id;
   try {
     const users = await UserModel.find().lean().exec();
     res.status(200).json(users);
+  } catch (err) {
+    res.status(400).json({err: err});
+  }
+};
+
+const getUser = async (req, res) => {
+  const userId = req.id;
+  try {
+    const user = await UserModel.findById(userId);
+    res.status(201).json({
+      id: user.id,
+      name: user.username,
+      role: user.role
+    });
   } catch (err) {
     res.status(400).json({err: err});
   }
@@ -162,6 +175,7 @@ const logoutUser = async (req, res) => {
 
 module.exports = {
   getUsers,
+  getUser,
   createUser,
   loginUser,
   refreshAccessToken,

@@ -1,5 +1,5 @@
 import useAuth from '../hooks/useAuth'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import Accordion from './Accordion';
 import { sidebarAccordion } from '../utils/sidebarAccordion';
 import { roles } from '../utils/userRoles';
@@ -9,6 +9,17 @@ import '../styles/Sidebar.css'
 
 const Sidebar = () => {
   const { auth } = useAuth();
+  const location = useLocation();
+
+  const links = {
+    dash: '/',
+    adn: '/admin-page',
+    sign: '/auth/signup',
+    ran: '/random-page',
+  };
+
+  const isActive = (links) => location.pathname === links;
+
   const role = roles.role;
   const level = roles.level;
 
@@ -17,8 +28,8 @@ const Sidebar = () => {
       <p>Sidebar</p>
       <div className="Sidebar__Buttons">
         <Link
-          className='Sidebar__Button'
-          to='/'
+          className={`Sidebar__Button ${isActive(links.dash) ? 'active' : ''}`}
+          to={links.dash}
           > 
             <FontAwesomeIcon icon={icons.chart} /> 
             <p>Dashboard</p>
@@ -27,24 +38,26 @@ const Sidebar = () => {
         <>
           <Accordion data={sidebarAccordion} />
           <Link
-            className='Sidebar__Button'
-            to='/admin-page' 
+            className={`Sidebar__Button ${isActive(links.adn) ? 'active' : ''}`}
+            to={links.adn} 
             > 
             <FontAwesomeIcon icon={icons.lock} />
               <p>Admin Page</p>
           </Link>
         </>
         )}
+        {auth && auth.role === role.spr && (
+          <Link
+            className={`Sidebar__Button ${isActive(links.sign) ? 'active' : ''}`}
+            to={links.sign} 
+            > 
+              <FontAwesomeIcon icon={icons.user} />
+              <p>Users</p> 
+          </Link>
+        )}
         <Link
-          className='Sidebar__Button'
-          to='/auth/signup'
-          > 
-            <FontAwesomeIcon icon={icons.user} />
-            <p>Users</p> 
-        </Link>
-        <Link
-          className='Sidebar__Button'
-          to='/random-page'
+          className={`Sidebar__Button ${isActive(links.ran) ? 'active' : ''}`}
+          to={links.ran} 
           > 
             <FontAwesomeIcon icon={icons.file} />
             <p>Random Page</p> 

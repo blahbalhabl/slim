@@ -1,0 +1,5 @@
+.Notfound {
+  background-color: blue;
+  flex-grow: 1;
+  height: 100%;
+}

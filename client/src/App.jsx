@@ -6,6 +6,7 @@ import { AuthProvider } from "./context/AuthContext"
 import PersistLogin from "./components/PersistLogin"
 import Header from "./components/Header"
 import Sidebar from "./components/Sidebar"
+import NotFound from "./components/NotFound"
 
 import Login from "./pages/Login"
 import Signup from "./pages/Signup"
@@ -40,11 +41,11 @@ const level = roles.level;
             {/* Public routes with Persistent Login */}
             <Route path="/unauthorized" element={<Unauthorized />} />
             <Route path="/random-page" element={<RandomPage />} />
+            <Route path="/profile/:userId" element={<Profile />}/>
+            <Route path="/" element={<Dashboard />}/>
             
-            {/* Private routes with Persistent Login*/}
+            {/* Private Admin Routes*/}
             <Route element={<RequireAuth allowedRoles={role.adn}/>}>
-              <Route path="/" element={<Dashboard />}/>
-              <Route path="/profile/:userId" element={<Profile />}/>
               <Route path="/admin-page" element={<AdminPage />}/>
               <Route path="/records/ordinances" element={<Ordinances />}/>
               <Route path="/records/ordinances/enacted" element={<Enacted />}/>
@@ -53,7 +54,8 @@ const level = roles.level;
             <Route element={<RequireAuth allowedRoles={role.spr} />}>
               <Route path="/auth/signup" element={<Signup />} />
             </Route>
-          </Route> 
+            <Route path="*" element={<NotFound />} />
+          </Route>
         </Routes>
         </div>
       </AuthProvider>
