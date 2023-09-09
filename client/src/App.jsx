@@ -33,30 +33,35 @@ const level = roles.level;
         <div className="App__Content">
         <Sidebar />
         <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
+        {/* Public routes */}
+        <Route path="/login" element={<Login />} />
 
-          {/* Persistent Login Routes */}
-          <Route element={<PersistLogin />}>
-            {/* Public routes with Persistent Login */}
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/random-page" element={<RandomPage />} />
-            <Route path="/profile/:userId" element={<Profile />}/>
-            <Route path="/" element={<Dashboard />}/>
-            
-            {/* Private Admin Routes*/}
-            <Route element={<RequireAuth allowedRoles={role.adn}/>}>
-              <Route path="/admin-page" element={<AdminPage />}/>
-              <Route path="/records/ordinances" element={<Ordinances />}/>
-              <Route path="/records/ordinances/enacted" element={<Enacted />}/>
-            </Route>
-            {/* Private Superadmin Routes */}
-            <Route element={<RequireAuth allowedRoles={role.spr} />}>
-              <Route path="/auth/signup" element={<Signup />} />
-            </Route>
-            <Route path="*" element={<NotFound />} />
+        {/* Persistent Login Routes */}
+        <Route element={<PersistLogin />}>
+          {/* Public routes with Persistent Login */}
+          <Route path="/unauthorized" element={<Unauthorized />} />
+          <Route path="/random-page" element={<RandomPage />} />
+          
+          {/* Private All Roles Route */}
+          <Route element={<RequireAuth allowedRoles={[role.adn, role.spr, role.usr]}/>}>
+            <Route path="/" element={<Dashboard />} />
+            <Route path="/profile/:userId" element={<Profile />} />
           </Route>
-        </Routes>
+
+          {/* Private Admin Routes*/}
+          <Route element={<RequireAuth allowedRoles={[role.adn]} />}>
+            <Route path="/admin-page" element={<AdminPage />} />
+            <Route path="/records/ordinances" element={<Ordinances />} />
+            <Route path="/records/ordinances/enacted" element={<Enacted />} />
+          </Route>
+
+          {/* Private Superadmin Routes */}
+          <Route element={<RequireAuth allowedRoles={[role.spr]} />}>
+            <Route path="/auth/signup" element={<Signup />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
         </div>
       </AuthProvider>
     </div>

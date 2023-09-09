@@ -7,7 +7,9 @@ import { faPencil,
   faCalendar,
   faBullhorn, 
   faScroll,
-  faCodePullRequest } from '@fortawesome/free-solid-svg-icons';
+  faCodePullRequest,
+  faEye,
+  faEyeSlash, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   records: faScroll,
@@ -20,4 +22,6 @@ export const icons = {
   user: faUser,
   horn: faBullhorn,
   requests: faCodePullRequest,
+  eye: faEye,
+  eyeslash: faEyeSlash,
 };

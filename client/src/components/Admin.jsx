@@ -17,6 +17,34 @@ const Users = () => {
       throw err;
     }
   };
+  
+  const handleFileUpload = async (file) => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await axiosPrivate.post("/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("File uploaded successfully", res.data);
+    } catch (err) {
+      console.error('Error uploading file', error);
+    }
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    const fileInput = document.getElementById("file");
+    if(fileInput.isDefaultNamespace.length === 1) {
+      const file = fileInput.files[0];
+      handleFileUpload(file);
+    } else {
+      console.log('No file Selected');
+    }
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -45,9 +73,18 @@ const Users = () => {
   }
 
   return (
-    <div>
-      <p>Number of Users:</p>
-      <p>{ users }</p>
+    <div className="Admin">
+      <div className="Admin__Card">
+        <p>Number of Users:</p>
+        <p>{ users }</p>
+      </div>
+      <div className="Admin__Card">
+        <p>Upload File</p>
+        <form onSubmit={handleSubmit} encType="multipart/form-data" action="/upload">
+            <input type="file" name="file" id="file" />
+            <input type="submit"/>
+        </form>
+      </div>
     </div>
   );
 };
