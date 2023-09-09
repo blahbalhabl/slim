@@ -45,14 +45,9 @@ const Users = () => {
   }
 
   return (
-    <div className="Users">
-      <h1>User List</h1>
-      <ul>
-        {users.map((user) => (
-          <li key={user._id}>{user.username}</li>
-        ))}
-      </ul>
-      <button onClick={sendRequest}>Show Users</button>
+    <div>
+      <p>Number of Users:</p>
+      <p>{ users }</p>
     </div>
   );
 };
