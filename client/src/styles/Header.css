@@ -5,6 +5,7 @@
     padding: 20px;
     background-color: var(--primary-color);
     height: 5vh;
+    color: #f1f3fa;
 }
 
 .Header__Container {
