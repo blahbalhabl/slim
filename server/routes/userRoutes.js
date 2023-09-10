@@ -16,7 +16,7 @@ router.post("/refresh", refreshAccessToken);
 router.post("/logout", logoutUser);
 
 // Protected Routes
-router.post("/signup", verify, createUser);
+router.post("/signup", createUser);
 router.get("/users", verify, getUsers);
 router.get("/user", verify, getUser);
 

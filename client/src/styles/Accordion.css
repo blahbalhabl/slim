@@ -38,7 +38,7 @@
 }
 
 .Accordion__Content.active  {
-    max-height: 200px;
+    max-height: 400px;
     background-color: var(--tertiary-color);
     display: flex;
     justify-content: center;

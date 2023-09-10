@@ -1,34 +1,38 @@
 import { useState } from "react"
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faV} from '@fortawesome/free-solid-svg-icons'
+import { icons } from "../utils/Icons";
 import '../styles/Tooltip.css'
 
 const Tooltip = ({data}) => {
 
   const [tooltip, setTooltip] = useState(false);
+  // const [overlay, setOverlay] = useState(false);
 
   const toggleTooltip = () => {
-		setTooltip((prevTooltip) => !prevTooltip);
+		setTooltip((prev) => !prev);
+    // setOverlay((prev) => !prev);
 	};
-
-
 
   return (
 		<>
       {data.map((item, i) => (
         <div key={i}>
           <div className="Tooltip" onClick={toggleTooltip}>
-            <FontAwesomeIcon icon={faV} />
+            <FontAwesomeIcon icon={icons.v} />
           </div>
           {tooltip && (
+            <>
             <div className="Tooltip__Body">
               <div key={i}>
-                <span>{item.buttons}</span>
+                <ul className="Tooltip__Buttons">{item.buttons}</ul>
               </div>
             </div>
+            {/* <div className="Tooltip__Overlay" onClick={toggleTooltip}></div> */}
+            </>
           )}
         </div>
       ))}
+     
     </>
   )
 };

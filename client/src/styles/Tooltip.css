@@ -2,21 +2,45 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    background-color: darkblue;
     border-radius: 5px;
     margin-left: 10px;
     padding: 5px;
     color: white;
+    cursor: pointer;
 }
 
 .Tooltip__Body {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    height: max-content;
     background-color: white;
     position: absolute;
     margin: 10px;
     right: 0;
     border: 1px solid #ccc;
     border-radius: 10px;
-    padding: 10px;
     z-index: 1; 
 }
 
+.Tooltip__Buttons {
+    list-style-type: none;
+    padding-left: 0;
+    user-select: none;
+    cursor: pointer;
+}
+
+.Tooltip:hover {
+    transform: scale(1.1);
+}
+
+/* .Tooltip__Overlay {
+    background-color: rgba(128, 128, 128, 0.1);
+    height: 300px;
+    width: 300px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 100%;
+} */

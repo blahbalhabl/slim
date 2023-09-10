@@ -9,9 +9,9 @@ export const sidebarAccordion = [
       {
         title:  <Link
                   className='Sidebar__Button'
-                  to={'/records/ordinances'}>
+                  to={'/records/ordinances/draft'}>
                     <FontAwesomeIcon icon={icons.pencil} />
-                    <p>List of Ordinances</p>
+                    <p>List of Draft Ordinances</p>
                 </Link>
       },
       {
@@ -21,7 +21,47 @@ export const sidebarAccordion = [
                     <FontAwesomeIcon icon={icons.pencil} />
                     <p>List of Enacted Ordinances</p>
                 </Link>
-      }
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/records/ordinances/enacted/category'}>
+                    <FontAwesomeIcon icon={icons.pencil} />
+                    <p>List of Enacted Ordinances by Category</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/records/ordinances/approved'}>
+                    <FontAwesomeIcon icon={icons.pencil} />
+                    <p>List of Approved Ordinances</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/records/ordinances/approved/category'}>
+                    <FontAwesomeIcon icon={icons.pencil} />
+                    <p>List of Approved Ordinances by Category</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/records/ordinances/amended'}>
+                    <FontAwesomeIcon icon={icons.pencil} />
+                    <p>List of Amended Ordinances</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
+                  to={'/records/ordinances/vetoed'}>
+                    <FontAwesomeIcon icon={icons.pencil} />
+                    <p>List of Vetoed Ordinances</p>
+                </Link>
+      },
     ]
   },
   {

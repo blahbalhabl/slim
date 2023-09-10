@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
+
+import '../styles/Admin.css'
+
 const Users = () => {
   const [users, setUser] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -36,7 +39,6 @@ const Users = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
     const fileInput = document.getElementById("file");
     if(fileInput.isDefaultNamespace.length === 1) {
       const file = fileInput.files[0];
@@ -74,17 +76,35 @@ const Users = () => {
 
   return (
     <div className="Admin">
-      <div className="Admin__Card">
-        <p>Number of Users:</p>
-        <p>{ users }</p>
+      <div className="Admin__Container">
+        <div className="Admin__Card">
+          <p>Number of Users:</p>
+          <p>{ users }</p>
+        </div>
+        <div className="Admin__Card">
+          <p>Number of Ordinances</p>
+          <p>{ users }</p>
+        </div>
+        <div className="Admin__Card">
+          <p>Total Pending Ordinances</p>
+          <p>{ users }</p>
+        </div>
+        <div className="Admin__Card">
+          <p>Total Vetoed Ordinances</p>
+          <p>{ users }</p>
+        </div>
+        <div className="Admin__Card">
+          <p>Total Approved Ordinances</p>
+          <p>{ users }</p>
+        </div>
       </div>
-      <div className="Admin__Card">
+      {/* <div className="Admin__Card">
         <p>Upload File</p>
         <form onSubmit={handleSubmit} encType="multipart/form-data" action="/upload">
             <input type="file" name="file" id="file" />
             <input type="submit"/>
         </form>
-      </div>
+      </div> */}
     </div>
   );
 };

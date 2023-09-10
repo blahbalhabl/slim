@@ -9,7 +9,10 @@ import { faPencil,
   faScroll,
   faCodePullRequest,
   faEye,
-  faEyeSlash, } from '@fortawesome/free-solid-svg-icons';
+  faEyeSlash,
+  faArrowRightFromBracket,
+  faCaretDown,
+  faSortDown, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   records: faScroll,
@@ -24,4 +27,7 @@ export const icons = {
   requests: faCodePullRequest,
   eye: faEye,
   eyeslash: faEyeSlash,
+  logout: faArrowRightFromBracket,
+  v: faCaretDown,
+  down: faSortDown,
 };

@@ -1,11 +1,15 @@
 const { Router } = require("express");
 const { 
 	handleFileUpload,
- 	getFiles, } = require('../controllers/uploadController');
+ 	getFiles,
+	getFile,
+	getImage, } = require('../controllers/uploadController');
 const { verify } = require("../middlewares/verifyToken");
 const router = Router();
 
-router.post('/upload', verify, handleFileUpload);
+router.post('/upload', handleFileUpload);
 router.get('/files', getFiles);
+router.get('/files/:filename', getFile);
+router.get('/image/:filename', getImage);
 
 module.exports = router
