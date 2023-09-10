@@ -8,6 +8,7 @@
   width: 15vw;
   height: auto;
   color: var(--tertiary-color);
+  transition: ease-in-out 0.2s;
 }
 
 .Sidebar__Buttons {
@@ -59,5 +60,6 @@
 }
 
 .Sidebar.collapsed {
-  max-width: 53px;
+  width: 53px;
+  transition: width ease-in-out 0.2s;
 }
