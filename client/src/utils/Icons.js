@@ -14,7 +14,8 @@ import { faPencil,
   faCaretDown,
   faSortDown,
   faFaceSadTear,
-  faBars, } from '@fortawesome/free-solid-svg-icons';
+  faBars,
+  faCaretLeft, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   records: faScroll,
@@ -31,6 +32,7 @@ export const icons = {
   eyeslash: faEyeSlash,
   logout: faArrowRightFromBracket,
   v: faCaretDown,
+  left: faCaretLeft,
   down: faSortDown,
   sad: faFaceSadTear,
   burger: faBars,
