@@ -6,6 +6,7 @@
   background-color: var(--secondary-color);
   width: 15vw;
   height: auto;
+  color: var(--tertiary-color);
 }
 
 .Sidebar__Buttons {
@@ -17,11 +18,12 @@
   display: flex;
   align-items: center;
   padding: 10px 0px 10px 20px;
-  border-bottom: 1px solid black;
+  /* border-bottom: 0.1px inset var(--tertiary-color); */
   transition: ease 200ms; 
   color: black;
   text-decoration: none;
   user-select: none;
+  color: var(--tertiary-color);
 }
 
 .Sidebar__Button > p{
@@ -29,9 +31,10 @@
 }
 
 .Sidebar__Button:hover {
-  background-color: darkgray;
+  background-color: darkslateblue;
 }
 
 .Sidebar__Button.active {
-  background-color: var(--primary-color);
+  background-color: var(--highlight-color);
+  color: white;
 }

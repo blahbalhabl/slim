@@ -25,7 +25,6 @@ const Sidebar = () => {
 
   return auth ? (
     <div className='Sidebar'>
-      <p>Sidebar</p>
       <div className="Sidebar__Buttons">
         <Link
           className={`Sidebar__Button ${isActive(links.dash) ? 'active' : ''}`}

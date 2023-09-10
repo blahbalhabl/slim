@@ -12,7 +12,8 @@
 
 .Admin__Card {
   padding: 20px;
-  background-color: var(--secondary-color);
+  background-color: white;
   border-radius: 15px;
   height: auto;
+  box-shadow: 3px 3px 3px #b6b5b5;
 }
