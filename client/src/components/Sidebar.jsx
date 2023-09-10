@@ -10,6 +10,7 @@ import '../styles/Sidebar.css';
 
 const Sidebar = () => {
   const { auth } = useAuth();
+  const [collapsed, setCollapsed] = useState(false);
   const location = useLocation();
 
   const links = {
@@ -19,14 +20,11 @@ const Sidebar = () => {
     ran: '/random-page',
   };
 
-  const [collapsed, setCollapsed] = useState(false); // State to track sidebar collapse
-
   const toggleSidebar = () => {
-    setCollapsed(!collapsed); // Toggle the collapsed state
+    setCollapsed(!collapsed);
   };
 
   const isActive = (links) => location.pathname === links;
-
   const role = roles.role;
   const level = roles.level;
 
@@ -49,7 +47,7 @@ const Sidebar = () => {
         </Link>
         {auth && auth.role === role.adn && (
           <>
-            { !collapsed && <Accordion data={sidebarAccordion} /> }
+            <Accordion data={sidebarAccordion} collapse={collapsed} />
             <Link
               className={`Sidebar__Button ${
                 isActive(links.adn) ? 'active' : ''

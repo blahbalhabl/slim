@@ -59,7 +59,7 @@ export const sidebarAccordion = [
                   className='Sidebar__Button'
                   to={'/records/ordinances/vetoed'}>
                     <FontAwesomeIcon icon={icons.pencil} />
-                    <p>List of Vetoed Ordinances</p>
+                    <p>List of Enacted Ordinances</p>
                 </Link>
       },
     ]

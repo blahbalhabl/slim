@@ -16,6 +16,7 @@
     align-items: center;
     width: 100%;
     user-select: none;
+    height: 20px;
 }
 
 .Accordion__Text {
