@@ -49,7 +49,7 @@ const Header = () => {
             <FontAwesomeIcon icon={icons.user} />
             </div>
             <p>
-              {auth.name}
+              {auth.name.toUpperCase()}
             </p>
             <div>
               <Tooltip data={headerTooltip}/>

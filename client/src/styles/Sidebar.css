@@ -1,6 +1,7 @@
 .Sidebar {
   display: flex;
   flex-direction: column;
+  position: relative;
   align-items: center;
   padding: 10px 0px 10px 0px;
   background-color: var(--secondary-color);
@@ -24,6 +25,7 @@
   text-decoration: none;
   user-select: none;
   color: var(--tertiary-color);
+  height: 20px;
 }
 
 .Sidebar__Button > p{
@@ -37,4 +39,25 @@
 .Sidebar__Button.active {
   background-color: var(--highlight-color);
   color: white;
+}
+
+.Sidebar__Top {
+  display: flex;
+  width: 100%;
+  justify-content: right;
+  align-items: center;
+  padding-right: 20px;
+}
+
+.Sidebar__Burger {
+  padding: 7px;
+  border-radius: 5px;
+  background-color: var(--highlight-color);
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.Sidebar.collapsed {
+  max-width: 2.8%;
 }

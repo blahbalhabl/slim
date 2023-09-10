@@ -15,7 +15,7 @@ const Dashboard = () => {
       <div className="Dashboard__Header">
         <div className="Dashboard__Info">
           {auth && (
-            <p>Welcome back, {auth.name}, {auth.role}</p>
+            <p>Welcome back, {auth.name}, {auth.role.toLowerCase()}</p>
           )}
         </div>
 
