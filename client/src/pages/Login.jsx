@@ -1,13 +1,15 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import { useState, useEffect } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { icons } from "../utils/Icons";
 import '../styles/Login.css'
 
 const Login = () => {
   const [visible, setVisible] = useState(false);
 
   const inputType = visible ? "text" : "password";
-  const toggleIcon = visible ? "hide" : "show";
+  const toggleIcon = visible ? <FontAwesomeIcon icon={icons.eye} /> : <FontAwesomeIcon icon={icons.eyeslash} />;
 
   const { 
     userLogin, 
@@ -37,8 +39,10 @@ const Login = () => {
 
   return (
     <div className="Login">
+      
       <form onSubmit={handleSubmit}>
         <div className="Login__Container">
+        {loginError && <p className="Login__Error__Message">{loginError}</p>}
           <h4>Login</h4>
           <input 
             type="email"
@@ -73,7 +77,6 @@ const Login = () => {
               checked={persist}
             />
             <label>Trust This Device</label>
-            {loginError && <p className="Login__Error__Message">{loginError}</p>}
           </div>
         </div>
       </form>

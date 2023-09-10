@@ -27,7 +27,7 @@ const Accordion = ({ data }) => {
 							<FontAwesomeIcon icon={icons[item.title.toLowerCase()]} />
 							<div className="Accordion__Text">{item.title}</div>
 							<span className="Accordion__Icon">
-								{selected === i ? '<' : '+'}
+								{selected === i ? '<' : <FontAwesomeIcon icon={icons.down} />}
 							</span>
 						</div>
 					</div>

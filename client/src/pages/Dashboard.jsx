@@ -1,6 +1,7 @@
 import useAuth from "../hooks/useAuth";
-import Users from "../components/Users"
+import Admin from "../components/Admin"
 import UserProfile from "./Profile";
+import Calendar from "../components/Calendar";
 import { roles } from "../utils/userRoles";
 import '../styles/Dashboard.css'
 
@@ -11,13 +12,22 @@ const Dashboard = () => {
 
   return (
     <div className="Dashboard">
-      <p>Dashboard</p>
-      { auth && auth?.role === role.adn 
-        ? <Users />
-        : auth && auth?.role === role.spr
-        ? <UserProfile />
-        : null
-      }
+      <div className="Dashboard__Header">
+        <div className="Dashboard__Info">
+          {auth && (
+            <p>Welcome back, {auth.name}, {auth.role}</p>
+          )}
+        </div>
+
+          { auth && auth?.role === role.adn 
+            ? <Admin />
+            : auth && auth?.role === role.spr
+            ? <UserProfile />
+            : null
+          }
+
+      </div>
+      <Calendar />
     </div>
   )
 };
