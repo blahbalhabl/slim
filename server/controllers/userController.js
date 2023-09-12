@@ -48,6 +48,7 @@ const refreshAccessToken = async (req, res) => {
 
     return res.status(200).json({
       id: user.id,
+      avatar: user.avatar,
       name: user.username, 
       role: user.role, 
       token: newAccessToken });
@@ -57,6 +58,7 @@ const refreshAccessToken = async (req, res) => {
 };
 
 const createUser = async (req, res) => {
+  const avatar = null;
   const { email, username, password, role } = req.body; 
 
   try {
@@ -68,7 +70,7 @@ const createUser = async (req, res) => {
     // Hash Password with Bcrypt
     const hash = await bcrypt.hash(password, 10);
     // If No Existing Email is found continue with signup
-    await UserModel.create({ email, username, password: hash, role })
+    await UserModel.create({ avatar, email, username, password: hash, role })
       .then((data) => {
         res.status(200).send(data);
       })
@@ -118,6 +120,7 @@ const loginUser = async (req, res) => {
       .status(200)
       .json({
         id: user._id,
+        avatar: user.avatar,
         name: user.username,
         role: user.role,
         token: accessToken,
@@ -129,7 +132,7 @@ const loginUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({}).count();
+    const users = await UserModel.find().lean().exec();
     res.status(200).json(users);
   } catch (err) {
     res.status(400).json({err: err});
@@ -141,6 +144,7 @@ const getUser = async (req, res) => {
   try {
     const user = await UserModel.findById(userId);
     res.status(201).json({
+      avatar: user.avatar,
       id: user.id,
       name: user.username,
       role: user.role

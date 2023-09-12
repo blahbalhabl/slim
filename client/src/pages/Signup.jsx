@@ -1,11 +1,9 @@
 import { useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-import { useNavigate } from "react-router-dom";
 
 import '../styles/Signup.css'
 
 const Signup = () => {
-  const navigate = useNavigate();
   const axiosPrivate = useAxiosPrivate();
   const [inputs, setInputs] = useState({
     email: "",
@@ -28,23 +26,25 @@ const Signup = () => {
   };
 
   const userSignup = async () => {
-    const userData = {
-      email: inputs.email,
-      username: inputs.username,
-      password: inputs.password,
-      role: inputs.role,
-    };
-    const res = await axiosPrivate.post('/signup', userData)
-    .catch((err) => {
-      console.log(err);
-    });
-    const data = await res.data;
-    return data;
+    try {
+      const userData = {
+        email: inputs.email,
+        username: inputs.username,
+        password: inputs.password,
+        role: inputs.role,
+      };
+      const res = await axiosPrivate.post('/signup', userData )
+      const data = await res.data;
+      return data;
+    } catch (err) {
+      console.log('Error:', err);
+    }
+    
   };
 
   return (
     <div className="Signup">
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} encType="multipart/form-data"> 
         <div className="Signup__Container">
           <h4>Signup</h4>
           <input 

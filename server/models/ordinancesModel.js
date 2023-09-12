@@ -1,31 +1,24 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  avatar: {
-    type: String,
-    required: false,
+const ordinanceSchema = new mongoose.Schema({
+  number: {
+    type: Number,
+    required: true,
+    unique: true,
   },
-  email: {
+  title: {
     type: String,
     required: true,
     unique: true,
   },
-  username: {
+  status: {
     type: String,
     required: true,
+    default: 'draft',
   },
-  password: {
+  file: {
     type: String,
     required: true,
-    minlength: 8,
-  },
-  role: {
-    type: String,
-    required: true,
-  },
-  refresh: {
-    type: String,
-    required: false,
   },
   createdAt: {
     type: Date,
@@ -37,9 +30,9 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", function (next) {
+ordinanceSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = mongoose.model("Users", userSchema);
+module.exports = mongoose.model("Ordinances", ordinanceSchema);

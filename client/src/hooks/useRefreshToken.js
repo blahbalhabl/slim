@@ -12,6 +12,7 @@ const useRefreshToken = () => {
       return {
         ...prev,
         id: res.data.id,
+        avatar: res.data.avatar,
         name: res.data.name,
         role: res.data.role,
         token: res.data.token, }

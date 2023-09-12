@@ -1,59 +1,87 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
-
 import '../styles/Admin.css'
 
 const Users = () => {
-  const [users, setUser] = useState([]);
+  const [users, setUser] = useState();
+  const [ordinances, setOrdinances] = useState();
+  // const [pending, setPending] = useState();
+  // const [vetoed, setVetoed] = useState();
+  // const [approved, setApproved] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosPrivate = useAxiosPrivate();
 
   const sendRequest = async () => {
     try {
-      const res = await axiosPrivate.get('/users');
-      const data = res.data;
-      return data;
+      const usersRes = await axiosPrivate.get('/users');
+      const ordinanceRes = await axiosPrivate.get('/ordinances');
+      // const ordinancesResponse = await axiosPrivate.get('/files');
+
+      // const ordinancesData = ordinancesResponse.data.myFiles;
+      // const pendingOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "pending");
+      // const vetoedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "vetoed");
+      // const approvedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "approved");
+      
+      return { 
+        users: usersRes.data, 
+        ordinances: ordinanceRes.data,
+        // pending: pendingOrdinances,
+        // vetoed: vetoedOrdinances,
+        // approved: approvedOrdinances,
+      };
     } catch (err) {
-      setError("An error occurred while fetching user data.");
+      setError("An error occurred while fetching data.");
       throw err;
     }
   };
   
-  const handleFileUpload = async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
+  // const handleFileUpload = async (file) => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
 
-      const res = await axiosPrivate.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("File uploaded successfully", res.data);
-    } catch (err) {
-      console.error('Error uploading file', error);
-    }
-  }
+  //     const res = await axiosPrivate.post("/upload", formData, {
+  //       headers: {
+  //         "Content-Type": "multipart/form-data",
+  //       },
+  //     });
+  //     console.log("File uploaded successfully", res.data);
+  //   } catch (err) {
+  //     console.error('Error uploading file', error);
+  //   }
+  // }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const fileInput = document.getElementById("file");
-    if(fileInput.isDefaultNamespace.length === 1) {
-      const file = fileInput.files[0];
-      handleFileUpload(file);
-    } else {
-      console.log('No file Selected');
-    }
-  }
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const fileInput = document.getElementById("file");
+  //   if(fileInput.isDefaultNamespace.length === 1) {
+  //     const file = fileInput.files[0];
+  //     handleFileUpload(file);
+  //   } else {
+  //     console.log('No file Selected');
+  //   }
+  // }
 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
     sendRequest()
-      .then((data) => {
-        isMounted && setUser(data);
+      .then(({
+        users, 
+        ordinances,
+        // pending,
+        // vetoed,
+        // approved,
+      }) => { 
+        if ( isMounted ) {
+          setUser(users);
+          setOrdinances(ordinances);
+          // setPending(pending);
+          // setVetoed(vetoed);
+          // setApproved(approved);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -79,23 +107,23 @@ const Users = () => {
       <div className="Admin__Container">
         <div className="Admin__Card">
           <p>Number of Users:</p>
-          <p>{ users }</p>
+          <p>{ users.length }</p>
         </div>
         <div className="Admin__Card">
           <p>Number of Ordinances</p>
-          <p>{ users }</p>
+          <p>{ ordinances.length }</p>
         </div>
         <div className="Admin__Card">
           <p>Total Pending Ordinances</p>
-          <p>{ users }</p>
+          {/* <p>{ pending.length }</p> */}
         </div>
         <div className="Admin__Card">
           <p>Total Vetoed Ordinances</p>
-          <p>{ users }</p>
+          {/* <p>{ vetoed.length }</p> */}
         </div>
         <div className="Admin__Card">
           <p>Total Approved Ordinances</p>
-          <p>{ users }</p>
+          {/* <p>{ approved.length }</p> */}
         </div>
       </div>
       {/* <div className="Admin__Card">
