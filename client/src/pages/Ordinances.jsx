@@ -1,36 +1,37 @@
 import { useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useEffect, useState } from 'react';
+import useAuth from '../hooks/useAuth';
+import CreateOrdinances from '../components/CreateOrdinances';
 
 const Ordinances = () => {
+  const { auth } = useAuth();
   const { status } = useParams();
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
-  const [draft, setDraft] = useState();
-  // const [ordinances, setOrdinances] = useState();
-  // const [pending, setPending] = useState();
-  // const [vetoed, setVetoed] = useState();
-  // const [approved, setApproved] = useState();
+  const [drafts, setDrafts] = useState();
+  const [ordinances, setOrdinances] = useState();
+  const [pending, setPending] = useState();
+  const [vetoed, setVetoed] = useState();
+  const [approved, setApproved] = useState();
+  const [enacted, setEnacted] = useState();
 
   const sendRequest = async () => {
     try {
-      const res = await axiosPrivate.get('/ordinances');
+      const res = await axiosPrivate.get(`/ordinances?level=${auth.level}`);
       const ordinances = res.data;
-      const draft = ordinances.filter((ordinance) => ordinance.status === 'draft');
-      console.log(draft);
-      // const ordinances = await axiosPrivate.get('/files');
-      // const ordinancesData = ordinances.data.myFiles;
-
-      // const pendingOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "pending");
-      // const vetoedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "vetoed");
-      // const approvedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "approved");
-
+      const drafts = ordinances.filter((ordinance) => ordinance.status === 'draft');
+      const pending = ordinances.filter((ordinance) => ordinance.status === 'pending');
+      const enacted = ordinances.filter((ordinance) => ordinance.status === 'enacted');
+      const vetoed = ordinances.filter((ordinance) => ordinance.status === 'vetoed');
+      const approved = ordinances.filter((ordinance) => ordinance.status === 'approved');
       return {
-        draft: draft,
-        // ordinances: ordinances,
-        // pending: pendingOrdinances,
-        // vetoed: vetoedOrdinances,
-        // approved: approvedOrdinances,
+        ordinances: ordinances,
+        drafts: drafts,
+        pending: pending,
+        vetoed: vetoed,
+        approved: approved,
+        encated: enacted,
       }
     } catch (err) {
       console.log(err)
@@ -42,18 +43,20 @@ const Ordinances = () => {
     const controller = new AbortController();
     sendRequest()
     .then(({
-      draft,
-      // ordinances,
-      // pending,
-      // vetoed,
-      // approved
+      drafts,
+      ordinances,
+      pending,
+      vetoed,
+      approved,
+      enacted,
     }) => {
       if ( isMounted ) {
-        setDraft(draft);
-        // setOrdinances(ordinances);
-        // setPending(pending[0]);
-        // setVetoed(vetoed[0]);
-        // setApproved(approved[0]);
+        setDrafts(drafts);
+        setOrdinances(ordinances);
+        setPending(pending);
+        setVetoed(vetoed);
+        setApproved(approved);
+        setEnacted(enacted);
       }
       setLoading(false);
     })
@@ -71,16 +74,19 @@ const Ordinances = () => {
     return <div>Loading...</div>;
   }
 
-  // const date = new Date(approved.uploadDate).toLocaleString()
-
   return (
     <div className="Ordinances">
-      { status === 'draft' && draft.length !== 0
-        ? <div>
-            <p>Ordinance: {draft}</p>
-            {/* <p>Upload Date: {date}</p> */}
-          </div>
-        : <p>No {status} Ordinances</p>}
+      <CreateOrdinances />
+      { status === 'draft' && drafts.length !== 0 && drafts.every(draft => draft.accessLevel === auth.level)
+        ? ( drafts.map((draft, i) => (
+          <div key={i}>
+            <p>Ordinance Number: {draft.number}</p>
+            <p>Series of: {draft.series}</p>
+            <p>Ordinance: {draft.title}</p>
+            <p>Upload Date: {new Date(draft.createdAt).toLocaleString()}</p>
+          </div>))
+        ) : (<p>No {status} Ordinances</p>)
+      }
     </div>
   )
 }

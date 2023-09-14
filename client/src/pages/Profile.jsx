@@ -8,6 +8,7 @@ import '../styles/Profile.css'
 
 const UserProfile = () => {
   const [user, setUser] = useState();
+  const [avatar, setAvatar] = useState();
   const axiosPrivate = useAxiosPrivate();
 
   const sendRequest = async () => {
@@ -20,22 +21,29 @@ const UserProfile = () => {
       return null;
     }
   };
-  const formData = new FormData();
+
   const handleAvatarChange = (e) => {
-    e.preventDefault();
-    formData.append('avatar', e.target.files[0])
+    const photo = e.target.files[0];
+    setAvatar(photo);
   };
 
-  const handleUpload = (e) => {
-    e.preventDefault();
+  const formData = new FormData();
+  const handleUpload = () => {
+    formData.append('avatar', avatar);
     uploadAvatar();
   };
 
   const uploadAvatar = async () => {
     try {
+      // Upload the new avatar
       await axiosPrivate.post('/avatar-upload', formData, {
         headers: {'Content-Type': 'multipart/form-data'}
       })
+
+      // Delete the previous avatar if it exists
+      if (user.avatar) {
+        await axiosPrivate.delete(`/delete-avatar/${user.avatar}`);
+      }
     } catch (err) {
       console.log(err);
     }

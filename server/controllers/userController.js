@@ -50,7 +50,8 @@ const refreshAccessToken = async (req, res) => {
       id: user.id,
       avatar: user.avatar,
       name: user.username, 
-      role: user.role, 
+      role: user.role,
+      level: user.level,
       token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
@@ -59,7 +60,7 @@ const refreshAccessToken = async (req, res) => {
 
 const createUser = async (req, res) => {
   const avatar = null;
-  const { email, username, password, role } = req.body; 
+  const { email, username, password, role, level } = req.body; 
 
   try {
     // Check if Email Already Exists
@@ -70,15 +71,15 @@ const createUser = async (req, res) => {
     // Hash Password with Bcrypt
     const hash = await bcrypt.hash(password, 10);
     // If No Existing Email is found continue with signup
-    await UserModel.create({ avatar, email, username, password: hash, role })
+    await UserModel.create({ avatar, email, username, password: hash, role, level, })
       .then((data) => {
         res.status(200).send(data);
       })
       .catch((err) => {
         res.status(400).send(err);
       });
-  } catch {
-    res.status(500).json("Something went wrong!");
+  } catch (err) {
+    res.status(500).json(`${err}: Something went wrong!`);
   }
 };
 
@@ -123,6 +124,7 @@ const loginUser = async (req, res) => {
         avatar: user.avatar,
         name: user.username,
         role: user.role,
+        level: user.level,
         token: accessToken,
       });
   } catch (err) {
@@ -147,7 +149,8 @@ const getUser = async (req, res) => {
       avatar: user.avatar,
       id: user.id,
       name: user.username,
-      role: user.role
+      role: user.role,
+      level: user.level,
     });
   } catch (err) {
     res.status(400).json({err: err});

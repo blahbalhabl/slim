@@ -3,6 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const protectedFileRoute = require('./routes/uploadRoutes');
 // const bodyParser = require('body-parser');
 // const methodOverride = require('method-override');
 
@@ -29,6 +30,7 @@ const conn = mongoose
 //API Route
 app.use("/api", user);
 app.use("/api", ordinance);
+app.use('/uploads/files', protectedFileRoute);
 // app.use("/api", fileRoutes);
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 

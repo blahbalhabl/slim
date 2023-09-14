@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const ordinanceSchema = new mongoose.Schema({
+const brgySchema = new mongoose.Schema({
   number: {
     type: Number,
     required: true,
@@ -37,9 +37,9 @@ const ordinanceSchema = new mongoose.Schema({
   },
 });
 
-ordinanceSchema.pre("save", function (next) {
+brgySchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = mongoose.model("Ordinances", ordinanceSchema);
+module.exports = mongoose.model("barangay", brgySchema);

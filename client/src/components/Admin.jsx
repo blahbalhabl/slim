@@ -1,9 +1,15 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import useAuth from "../hooks/useAuth";
+import { roles } from "../utils/userRoles"
 
 import '../styles/Admin.css'
 
 const Users = () => {
+  const role = roles.role;
+  const level = roles.level;
+
+  const { auth } = useAuth();
   const [users, setUser] = useState();
   const [ordinances, setOrdinances] = useState();
   // const [pending, setPending] = useState();
@@ -16,14 +22,7 @@ const Users = () => {
   const sendRequest = async () => {
     try {
       const usersRes = await axiosPrivate.get('/users');
-      const ordinanceRes = await axiosPrivate.get('/ordinances');
-      // const ordinancesResponse = await axiosPrivate.get('/files');
-
-      // const ordinancesData = ordinancesResponse.data.myFiles;
-      // const pendingOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "pending");
-      // const vetoedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "vetoed");
-      // const approvedOrdinances = ordinancesData.filter(file => file.metadata && file.metadata.status === "approved");
-      
+      const ordinanceRes = await axiosPrivate.get(`/ordinances?level=${auth.level}`);
       return { 
         users: usersRes.data, 
         ordinances: ordinanceRes.data,

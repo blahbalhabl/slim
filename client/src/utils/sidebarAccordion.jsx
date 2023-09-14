@@ -4,7 +4,7 @@ import { icons } from './Icons';
 
 export const sidebarAccordion = [
   {
-    title: 'Records',
+    title: 'Reports',
     contents: [
       {
         title:  <Link

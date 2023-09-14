@@ -1,12 +1,14 @@
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const imageStorage = multer.diskStorage({
   destination(req, file, cb) {
     cb(null, './uploads/images');
   },
   filename(req, file, cb) {
-    cb(null, file.originalname);
+    const ext = path.extname(file.originalname);
+    cb(null, file.originalname + ' - ' + Date.now() + ext);
   },
 });
 
@@ -21,10 +23,20 @@ const imageFilter = (req, file, cb) => {
 
 const fileStorage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, './uploads/files');
+   // Assuming the year is extracted from the request or document
+   const year = req.body.series || 'unknown'; // Use 'unknown' as a default value
+
+   // Create the dynamic subfolder structure
+   const uploadPath = path.join(__dirname, '..', 'uploads', 'files', year);
+
+   // Ensure the directory exists (create it if not)
+   fs.mkdirSync(uploadPath, { recursive: true });
+
+   cb(null, uploadPath);
   },
   filename(req, file, cb) {
-    cb(null, file.originalname);
+    const ext = path.extname(file.originalname);
+    cb(null, file.originalname + ' - ' + Date.now() + ext);
   },
 });
 

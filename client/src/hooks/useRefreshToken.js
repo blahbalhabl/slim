@@ -15,6 +15,7 @@ const useRefreshToken = () => {
         avatar: res.data.avatar,
         name: res.data.name,
         role: res.data.role,
+        level: res.data.level,
         token: res.data.token, }
     });
     return res.data.token;

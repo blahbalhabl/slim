@@ -10,6 +10,7 @@ const Signup = () => {
     username: "",
     password: "",
     role: "",
+    level: "",
   });
 
   const handleChange = (e) => {
@@ -32,6 +33,7 @@ const Signup = () => {
         username: inputs.username,
         password: inputs.password,
         role: inputs.role,
+        level: inputs.level,
       };
       const res = await axiosPrivate.post('/signup', userData )
       const data = await res.data;
@@ -77,6 +79,14 @@ const Signup = () => {
             value={inputs.role}
             onChange={handleChange}
             placeholder="Role"
+            required 
+            />
+            <input 
+            type="text"
+            name="level"
+            value={inputs.level}
+            onChange={handleChange}
+            placeholder="Level: LGU : DILG : BARANGAY"
             required 
             />
             <button className="Signup__Button"

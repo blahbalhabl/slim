@@ -2,7 +2,7 @@ export const roles = {
   level: {
       lgu: 'LGU',
       dlg: 'DILG',
-      brg: 'Barangay',
+      brg: 'BARANGAY',
   },
   role: {
       spr: 'Superadmin',

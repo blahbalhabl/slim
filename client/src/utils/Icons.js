@@ -18,7 +18,7 @@ import { faPencil,
   faCaretLeft, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
-  records: faScroll,
+  reports: faScroll,
   paperclip: faPaperclip,
   calendar: faCalendar,
   pencil: faPencil,

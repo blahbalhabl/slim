@@ -9,7 +9,8 @@ const {
 } = require("../controllers/userController");
 const { 
   avatarUpload, 
-  getAvatars
+  getAvatars,
+  delAvatar,
 } = require('../controllers/avatarController');
 const { verify } = require("../middlewares/verifyToken");
 const { image } = require('../middlewares/configureMulter')
@@ -20,12 +21,16 @@ router.post("/login", loginUser);
 router.post("/refresh", refreshAccessToken);
 router.post("/logout", logoutUser);
 
+// Apply the verify middleware to this route
+router.use(verify);
+
 // Protected Routes
-router.post("/signup", verify, createUser);
-router.get("/users", verify, getUsers);
-router.get("/user", verify, getUser);
-router.post('/avatar-upload', verify, image.single('avatar'), avatarUpload);
+router.post("/signup", createUser);
+router.get("/users", getUsers);
+router.get("/user", getUser);
+router.post('/avatar-upload', image.single('avatar'), avatarUpload);
 router.get('/avatars', getAvatars);
+router.delete('/delete-avatar/:fileName', delAvatar);
 
 
 module.exports = router;

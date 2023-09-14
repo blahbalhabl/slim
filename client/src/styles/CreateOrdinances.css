@@ -1,0 +1,23 @@
+.CreateOrdinances__Container {
+  padding: 10px;
+}
+
+.CreateOrdinances__Title {
+  height: max-content;
+  flex-grow: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+}
+
+.CreateOrdinances__Content {
+  height: max-content;
+  flex-grow: 1;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  border: 1px solid black;
+  margin-bottom: 10px;
+}

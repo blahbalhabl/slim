@@ -1,3 +1,4 @@
+const fs = require('fs');
 const UserModel = require('../models/userModel');
 
 const avatarUpload = async (req, res) => {
@@ -9,7 +10,6 @@ const avatarUpload = async (req, res) => {
 
   try {
     const photo = req.file.filename;
-    console.log(photo)
     const user = await UserModel.findById(userId);
     
     if (!user) {
@@ -39,7 +39,25 @@ const getAvatars = async (req, res) => {
   }
 };
 
+const delAvatar = async (req, res) => {
+  try {
+    const fileName = req.params.fileName;
+
+    //  Delete the file from server
+    const filePath = `../server/uploads/images/${fileName}`;
+    await fs.promises.unlink(filePath);
+
+    return res.status(200).json({message: 'Avatar File Deleted'});
+  } catch(err) {
+    if (err.code === 'ENOENT') {
+      return res.status(404).json({ message: 'Avatar not found' });
+    }
+    res.status(500).json({err, message: 'Internal Server Error!'});
+  }
+};
+
 module.exports = {
   avatarUpload,
   getAvatars,
+  delAvatar,
 }
