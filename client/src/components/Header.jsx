@@ -4,6 +4,7 @@ import useLogout from "../hooks/useLogout";
 import Tooltip from "./Tooltip";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../utils/Icons'
+import { BASE_URL } from '../api/axios'
 import "../styles/Header.css";
 
 const Header = () => {
@@ -15,7 +16,6 @@ const Header = () => {
     await logout();
     navigate('/login');
   }
-
   const headerTooltip = [
     {
       buttons: [
@@ -45,9 +45,9 @@ const Header = () => {
       <div className="Header__Container">
         {auth && (
           <div className="Header__Info">
-            <div className="Header__Avatar">
-            <FontAwesomeIcon icon={icons.user} />
-            </div>
+            {auth && auth?.avatar ? (
+              <img className="Header__Avatar" src={`${BASE_URL}/uploads/images/${auth.avatar}`}  />
+            ) : (<FontAwesomeIcon icon={icons.user} />)}
             <p>
               {auth.name.toUpperCase()}
             </p>

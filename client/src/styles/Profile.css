@@ -1,0 +1,17 @@
+.Profile {
+  height: 100%;
+  flex-grow: 1;
+}
+
+.Profile__Avatar {
+  height: 500px;
+  width: 500px;
+  border-radius: 500px;
+}
+
+.Profile__Avatar > img {
+  height: 100%;
+  width: 100%;
+  border-radius: 500px;
+  user-select: none;
+}

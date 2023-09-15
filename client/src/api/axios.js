@@ -1,14 +1,14 @@
 import axios from "axios";
-const BASE_URL = 'http://localhost:3500/api'
+export const BASE_URL = 'http://192.168.1.156:3500' // Change the IP address to the IP Address hosting the server and Web App
 
 axios.defaults.withCredentials = true;
 
 export default axios.create({
-  baseURL: BASE_URL,
+  baseURL: `${BASE_URL}/api`,
 });
 
 export const axiosPrivate = axios.create({
-  baseURL: BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
+  baseURL: `${BASE_URL}/api`,
+  headers: { 'Content-Type': 'multipart/form-data' },
   withCredentials: true
 });

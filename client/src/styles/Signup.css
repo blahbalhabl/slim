@@ -1,9 +1,8 @@
 .Signup {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* display: flex; */
+  /* justify-content: center; */
+  /* align-items: center; */
   flex-grow: 1;
-  height: 100%;
   padding: 10px;
 }
 
@@ -12,7 +11,7 @@
   margin: auto;
   padding: 30px;
   height: max-content;
-  width: 400px;
+  width: 90%;
   display: flex;
   flex-direction: column;
   justify-content: center;

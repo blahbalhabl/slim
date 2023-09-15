@@ -1,35 +1,35 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  avatar: {
-    type: String,
-    required: false,
-  },
-  email: {
+const ordinanceSchema = new mongoose.Schema({
+  number: {
     type: String,
     required: true,
     unique: true,
   },
-  username: {
+  series: {
+    type: Number,
+    required: true,
+  },
+  title: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  status: {
     type: String,
     required: true,
   },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
-  },
-  role: {
+  file: {
     type: String,
     required: true,
   },
-  level: {
+  mimetype: {
     type: String,
     required: true,
   },
-  refresh: {
+  accessLevel: {
     type: String,
-    required: false,
+    required: true,
   },
   createdAt: {
     type: Date,
@@ -41,9 +41,9 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-userSchema.pre("save", function (next) {
+ordinanceSchema.pre("save", function (next) {
   this.updatedAt = new Date();
   next();
 });
 
-module.exports = mongoose.model("Users", userSchema);
+module.exports = mongoose.model("LGU-Ordinances", ordinanceSchema);

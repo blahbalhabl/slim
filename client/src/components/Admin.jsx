@@ -1,59 +1,51 @@
 import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
-
+import useAuth from "../hooks/useAuth";
+import Loader from "./Loader";
 
 import '../styles/Admin.css'
 
 const Users = () => {
-  const [users, setUser] = useState([]);
+
+  const { auth } = useAuth();
+  const [users, setUser] = useState();
+  const [ordinances, setOrdinances] = useState();
+  const [pending, setPending] = useState();
+  const [vetoed, setVetoed] = useState();
+  const [approved, setApproved] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosPrivate = useAxiosPrivate();
 
   const sendRequest = async () => {
     try {
-      const res = await axiosPrivate.get('/users');
-      const data = res.data;
-      return data;
+      const usersRes = await axiosPrivate.get('/users');
+      const ordinanceRes = await axiosPrivate.get(`/count-ordinances?level=${auth.level}`);
+      return { 
+        users: usersRes.data, 
+        ordinances: ordinanceRes.data,
+      };
     } catch (err) {
-      setError("An error occurred while fetching user data.");
+      setError("An error occurred while fetching data.");
       throw err;
     }
   };
-  
-  const handleFileUpload = async (file) => {
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const res = await axiosPrivate.post("/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      console.log("File uploaded successfully", res.data);
-    } catch (err) {
-      console.error('Error uploading file', error);
-    }
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const fileInput = document.getElementById("file");
-    if(fileInput.isDefaultNamespace.length === 1) {
-      const file = fileInput.files[0];
-      handleFileUpload(file);
-    } else {
-      console.log('No file Selected');
-    }
-  }
 
   useEffect(() => {
     let isMounted = true;
     const controller = new AbortController();
     sendRequest()
-      .then((data) => {
-        isMounted && setUser(data);
+      .then(({
+        users, 
+        ordinances,
+      }) => { 
+        if ( isMounted ) {
+          setUser(users);
+          setOrdinances(ordinances.all);
+          setPending(ordinances.pending);
+          setVetoed(ordinances.vetoed);
+          setApproved(ordinances.approved);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -67,7 +59,7 @@ const Users = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (error) {
@@ -79,32 +71,25 @@ const Users = () => {
       <div className="Admin__Container">
         <div className="Admin__Card">
           <p>Number of Users:</p>
-          <p>{ users }</p>
+          <p>{ users.length }</p>
         </div>
         <div className="Admin__Card">
           <p>Number of Ordinances</p>
-          <p>{ users }</p>
+          <p>{ ordinances }</p>
         </div>
         <div className="Admin__Card">
           <p>Total Pending Ordinances</p>
-          <p>{ users }</p>
+          <p>{ pending }</p>
         </div>
         <div className="Admin__Card">
           <p>Total Vetoed Ordinances</p>
-          <p>{ users }</p>
+          <p>{ vetoed }</p>
         </div>
         <div className="Admin__Card">
           <p>Total Approved Ordinances</p>
-          <p>{ users }</p>
+          <p>{ approved }</p>
         </div>
       </div>
-      {/* <div className="Admin__Card">
-        <p>Upload File</p>
-        <form onSubmit={handleSubmit} encType="multipart/form-data" action="/upload">
-            <input type="file" name="file" id="file" />
-            <input type="submit"/>
-        </form>
-      </div> */}
     </div>
   );
 };
