@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const ordinanceSchema = new mongoose.Schema({
   number: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },
@@ -20,6 +20,10 @@ const ordinanceSchema = new mongoose.Schema({
     required: true,
   },
   file: {
+    type: String,
+    required: true,
+  },
+  mimetype: {
     type: String,
     required: true,
   },
@@ -42,4 +46,4 @@ ordinanceSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Ordinances", ordinanceSchema);
+module.exports = mongoose.model("LGU-Ordinances", ordinanceSchema);

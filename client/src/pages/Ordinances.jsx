@@ -3,60 +3,65 @@ import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import CreateOrdinances from '../components/CreateOrdinances';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loader from '../components/Loader';
+import { icons } from '../utils/Icons'
+import '../styles/Ordinances.css'
 
 const Ordinances = () => {
   const { auth } = useAuth();
   const { status } = useParams();
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
-  const [drafts, setDrafts] = useState();
   const [ordinances, setOrdinances] = useState();
-  const [pending, setPending] = useState();
-  const [vetoed, setVetoed] = useState();
-  const [approved, setApproved] = useState();
-  const [enacted, setEnacted] = useState();
 
   const sendRequest = async () => {
     try {
-      const res = await axiosPrivate.get(`/ordinances?level=${auth.level}`);
+      const res = await axiosPrivate.get(`/ordinances?type=ordinances&level=${auth.level}&status=${status}`);
       const ordinances = res.data;
-      const drafts = ordinances.filter((ordinance) => ordinance.status === 'draft');
-      const pending = ordinances.filter((ordinance) => ordinance.status === 'pending');
-      const enacted = ordinances.filter((ordinance) => ordinance.status === 'enacted');
-      const vetoed = ordinances.filter((ordinance) => ordinance.status === 'vetoed');
-      const approved = ordinances.filter((ordinance) => ordinance.status === 'approved');
+      // const drafts = ordinances.filter((ordinance) => ordinance.status === 'draft');
       return {
         ordinances: ordinances,
-        drafts: drafts,
-        pending: pending,
-        vetoed: vetoed,
-        approved: approved,
-        encated: enacted,
       }
     } catch (err) {
       console.log(err)
     }
   }
 
+  const handleDownload = async (filename, series) => {
+    try {
+      const response = await axiosPrivate.get(`/download/${filename}?type=ordinances&level=${auth.level}&series=${series}`, {
+        responseType: 'blob', // Set the response type to 'blob' to handle binary data
+      });
+  
+      // Create a blob object from the binary data
+      const blob = new Blob([response.data]);
+  
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+  
+      // Create a link element to trigger the download
+      const fileLink = document.createElement('a');
+      fileLink.href = url;
+      fileLink.download = filename;
+      fileLink.click();
+  
+      // Clean up the URL created for the blob
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   useEffect(() => {
     let isMounted = true;
-    const controller = new AbortController();
     sendRequest()
     .then(({
-      drafts,
       ordinances,
-      pending,
-      vetoed,
-      approved,
-      enacted,
     }) => {
       if ( isMounted ) {
-        setDrafts(drafts);
         setOrdinances(ordinances);
-        setPending(pending);
-        setVetoed(vetoed);
-        setApproved(approved);
-        setEnacted(enacted);
+        console.log(ordinances)
       }
       setLoading(false);
     })
@@ -66,27 +71,63 @@ const Ordinances = () => {
 
     return () => {
       isMounted = false;
-      controller.abort();
     }
-  },[]);
+  },[auth.level, status]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   return (
     <div className="Ordinances">
       <CreateOrdinances />
-      { status === 'draft' && drafts.length !== 0 && drafts.every(draft => draft.accessLevel === auth.level)
-        ? ( drafts.map((draft, i) => (
-          <div key={i}>
-            <p>Ordinance Number: {draft.number}</p>
-            <p>Series of: {draft.series}</p>
-            <p>Ordinance: {draft.title}</p>
-            <p>Upload Date: {new Date(draft.createdAt).toLocaleString()}</p>
-          </div>))
-        ) : (<p>No {status} Ordinances</p>)
-      }
+      <div className="Ordinances__Container">
+      <h3 className='Ordinances__Top__Title'>{status.toUpperCase()} ORDINANCES</h3>
+        <table className="Ordinances__Content">
+          <thead>
+            <tr className="Ordinances__Header">
+              <th>Type</th>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Size</th>
+              <th></th>
+            </tr>
+          </thead>
+          { ordinances.length > 0 ? (
+              ordinances.map((ordinance, i) => (
+                (ordinance.status === status && ordinance.accessLevel === auth.level) ? (
+                  <tbody key={i}>
+                  <tr 
+                    className='Ordinances__Link' 
+                    key={i}>
+                    <td>
+                      { ordinance.mimetype === 'application/pdf' && (<FontAwesomeIcon icon={icons.pdf}/>)}
+                    </td>
+                    <td 
+                      className='Ordinances__Number'>
+                        <p>ORDINANCE NO {ordinance.number}, Series of {ordinance.series} {ordinance.title.toUpperCase()}</p>
+                    </td>
+                    <td 
+                      className='Ordinances__Date'>
+                        {new Date(ordinance.createdAt).toLocaleString()}
+                    </td>
+                    <td>
+                      Size
+                    </td>
+                    <td className='Ordinances__Center'>
+                      <FontAwesomeIcon 
+                        className='Ordinances__Download'
+                        onClick={() => handleDownload(ordinance.file, ordinance.series)}
+                        icon={icons.download} />
+                    </td>
+                  </tr>
+                  </tbody>
+                ) : null
+              ))
+            ) : ( <p>No {status} Ordinances</p> )
+          }
+        </table>
+      </div>
     </div>
   )
 }

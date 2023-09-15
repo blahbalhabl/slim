@@ -10,6 +10,7 @@ const draftOrdinance = async (req, res) => {
 
   const { number, series, title, status, level } = req.body;
   const file = req.file.filename;
+  const mimetype = req.file.mimetype;
 
   try {
     if (level === 'BARANGAY') {
@@ -18,20 +19,20 @@ const draftOrdinance = async (req, res) => {
       if(exists) {
         return res.status(400).json('Barangay Ordinance is Already Existing!');
       };
-    };
-    
-    const brgyExists = await Ordinance.findOne({ number });
+    } else {
+      const exists = await Ordinance.findOne({ number });
 
-    if(brgyExists) {
-      return res.status(400).json('Ordinance is Already Existing!')
+      if(exists) {
+        return res.status(400).json('Ordinance is Already Existing!')
+      }
     }
-
+    
     if (level === 'BARANGAY') {
       // Create the ordinance in BarangaySchema
-      await Barangay.create({ number, title, series, status, file, accessLevel: level });
+      await Barangay.create({ number, title, series, status, file, mimetype, accessLevel: level });
     } else {
       // Create the ordinance in OrdinanceSchema
-      await Ordinance.create({ number, title, series, status, file, accessLevel: level });
+      await Ordinance.create({ number, title, series, status, file, mimetype, accessLevel: level });
     }
     res.status(200).json('Successfully Uploaded!')
   } catch (err) {
@@ -40,16 +41,40 @@ const draftOrdinance = async (req, res) => {
 };
 
 const getOrdinances = async (req, res) => {
-  const level = req.query.level;
-  let ordinances;
+  const { level, status } = req.query;
+  const filters = { status }
+
+  let response;
   try {
     if (level === 'LGU') {
-      ordinances = await Ordinance.find().lean().exec();
+      response = await Ordinance.find(filters).sort({ createdAt: 1 }).exec();
     } else {
-      ordinances = await Barangay.find().lean().exec();
+      response = await Barangay.find(filters).sort({ createdAt: 1 }).exec();
     }
      
-    res.status(200).json(ordinances);
+    res.status(200).json(response);
+  } catch (err) {
+    return res.satus(400).json({err: 'Something went wrong!'});
+  }
+}
+
+const countOrdinances = async (req, res) => {
+  const level = req.query.level;
+  let response = {};
+  try {
+    if (level === 'LGU') {
+      response.all = await Ordinance.countDocuments().exec();
+      response.pending = await Ordinance.countDocuments({status: 'pending'}).exec();
+      response.vetoed = await Ordinance.countDocuments({status: 'vetoed'}).exec();
+      response.approved = await Ordinance.countDocuments({status: 'approved'}).exec();
+    } else {
+      response.all = await Barangay.countDocuments().exec();
+      response.pending = await Barangay.countDocuments({status: 'pending'}).exec();
+      response.vetoed = await Barangay.countDocuments({status: 'vetoed'}).exec();
+      response.approved = await Barangay.countDocuments({status: 'approved'}).exec();
+    }
+     
+    res.status(200).json(response);
   } catch (err) {
     return res.satus(400).json({err: 'Something went wrong!'});
   }
@@ -58,11 +83,11 @@ const getOrdinances = async (req, res) => {
 //  Delete both file and Ordinance in Database
 const delOrdinance = async (req, res) => {
   try {
-    const level = req.query.level;
+    const { level, series, type } = req.query;
     const fileName = req.params.fileName;
 
     // Delete the file from the server
-    const filePath = `../server/uploads/files/${fileName}`;
+    const filePath = `../server/uploads/files/${type}/${level}/${series}/${fileName}`;
     await fs.promises.unlink(filePath);
 
     // Delete the corresponding database object
@@ -90,7 +115,7 @@ const updateOrdinance = async (req, res) => {
   }
 
   try {
-    const level = req.query.level;
+    const { level, series, type } = req.query;
     const fileName = req.params.fileName;
     const updateFile = req.file.filename;
     // const { number, title, status } = req.body;
@@ -115,7 +140,7 @@ const updateOrdinance = async (req, res) => {
     }
 
     // Delete the file from the server
-    const filePath = `../server/uploads/files/${fileName}`;
+    const filePath = `../server/uploads/files/${type}/${level}/${series}/${fileName}`;
     await fs.promises.unlink(filePath);
 
     return res.status(200).json({ message: 'Ordinance file updated successfully' });
@@ -125,10 +150,33 @@ const updateOrdinance = async (req, res) => {
   }
 };
 
+const downloadOrdinance = (req, res) => {
+  try {
+    const { level, series, type } = req.query;
+    const fileName = req.params.fileName;
+    const filePath = `../server/uploads/files/${type}/${level}/${series}/${fileName}`;
+
+    // Use res.download to trigger the file download
+    res.download(filePath, (err) => {
+      if (err) {
+        console.error('Error downloading file:', err);
+        res.status(500).json({ message: 'Internal Server Error' });
+      } else {
+        console.log('File downloaded successfully');
+      }
+    });
+  } catch (err) {
+    console.error('Error in downloadOrdinance:', err);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
+
 
 module.exports = {
   draftOrdinance,
   getOrdinances,
+  countOrdinances,
   delOrdinance,
   updateOrdinance,
+  downloadOrdinance,
 }

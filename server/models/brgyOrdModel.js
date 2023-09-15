@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const brgySchema = new mongoose.Schema({
   number: {
-    type: Number,
+    type: String,
     required: true,
     unique: true,
   },
@@ -20,6 +20,10 @@ const brgySchema = new mongoose.Schema({
     required: true,
   },
   file: {
+    type: String,
+    required: true,
+  },
+  mimetype: {
     type: String,
     required: true,
   },
@@ -42,4 +46,4 @@ brgySchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("barangay", brgySchema);
+module.exports = mongoose.model("Barangay-Ordinances", brgySchema);

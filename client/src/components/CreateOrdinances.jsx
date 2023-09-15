@@ -45,7 +45,7 @@ const CreateOrdinances = () => {
       formData.append('status', 'draft');
       formData.append('level', auth.level);
       formData.append('file', file);
-      await axiosPrivate.post('/upload/ordinance/draft', formData, {
+      await axiosPrivate.post('/upload/ordinance/draft?type=ordinances', formData, {
         headers: {'Content-Type': 'multipart/form-data'}
       });
     } catch (err) {

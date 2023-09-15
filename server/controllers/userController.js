@@ -58,9 +58,20 @@ const refreshAccessToken = async (req, res) => {
   }
 };
 
+const generateDefaultPassword = (email) => {
+  // Take the first 4 characters of the email
+  const emailPrefix = email.slice(0, 4);
+  
+  // Generate 4 random digits
+  const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  
+  // Combine the email prefix and random digits
+  return `${emailPrefix}${randomDigits}`;
+};
+
 const createUser = async (req, res) => {
   const avatar = null;
-  const { email, username, password, role, level } = req.body; 
+  const { email, username, role, level } = req.body; 
 
   try {
     // Check if Email Already Exists
@@ -68,23 +79,24 @@ const createUser = async (req, res) => {
     if (isExisting) {
       return res.status(400).json("User Already Exists!");
     }
+
+    // Generate Default Password
+    const defaultPassword = generateDefaultPassword(email);
+
+    const saltRounds = 10;
     // Hash Password with Bcrypt
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(defaultPassword, saltRounds);
     // If No Existing Email is found continue with signup
-    await UserModel.create({ avatar, email, username, password: hash, role, level, })
-      .then((data) => {
-        res.status(200).send(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
+    const user = await UserModel.create({ avatar, email, username, password: hash, role, level })
+     
+    return res.status(200).json({ user: user, defaultPassword: defaultPassword });
   } catch (err) {
     res.status(500).json(`${err}: Something went wrong!`);
   }
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, } = req.body;
 
   try {
     // Find User in DB
@@ -180,6 +192,36 @@ const logoutUser = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const userId = req.id;
+  const { oldpass, newpass, confirm } = req.body;
+
+  try {
+    const user = await UserModel.findById(userId);
+    const passMatch = await bcrypt.compare(oldpass, user.password);
+
+    if(!user) {
+      return res.status(400).json({message: 'User does not exist!'});
+    }
+
+    if(!passMatch) {
+      return res.status(400).json({message: 'Wrong Old Password!'});
+    }
+
+    if(newpass === confirm) {
+      const hash = await bcrypt.hash(newpass, 10);
+      await UserModel.findByIdAndUpdate( userId,
+        { $set: {password: hash }},
+        { new: true }
+      )
+      // await UserModel.updateOne({password, $set: {password: hash}});
+      return res.status(200).json({message: 'Password Changed!'});
+    }
+  } catch (err) {
+    return res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -187,4 +229,5 @@ module.exports = {
   loginUser,
   refreshAccessToken,
   logoutUser,
+  changePassword,
 };

@@ -1,0 +1,62 @@
+.Ordinances {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.Ordinances__Top__Title {
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.Ordinances__Container {
+  display: inherit;
+  flex-direction: column;
+  justify-content: left;
+  width: 95%;
+}
+
+.Ordinances__Link {
+  cursor: pointer;
+  user-select: none;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.Ordinances__Link:hover {
+  background-color: gainsboro;
+  border: none;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.Ordinances__Link:hover td {
+  border-collapse: separate;
+  border-spacing: 0;
+  border: none; /* Add this style to remove borders on hover */
+}
+
+.Ordinances__Content {
+  padding: 10px;
+  flex-grow: 1;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: 3px 3px 3px #b6b5b5;
+}
+
+td, th {
+  /* border: 1px solid #dddddd; */
+  text-align: left;
+  border: none;
+  padding: 10px;
+}
+
+.Ordinances__Center {
+  text-align: center;
+}
+
+.Ordinances__Download {
+  cursor: pointer;
+}

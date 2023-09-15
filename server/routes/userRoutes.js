@@ -6,6 +6,7 @@ const {
   loginUser,
   refreshAccessToken,
   logoutUser,
+  changePassword,
 } = require("../controllers/userController");
 const { 
   avatarUpload, 
@@ -25,11 +26,12 @@ router.post("/logout", logoutUser);
 router.use(verify);
 
 // Protected Routes
-router.post("/signup", createUser);
 router.get("/users", getUsers);
 router.get("/user", getUser);
-router.post('/avatar-upload', image.single('avatar'), avatarUpload);
 router.get('/avatars', getAvatars);
+router.post("/signup", createUser);
+router.post('/change-password', changePassword);
+router.post('/avatar-upload', image.single('avatar'), avatarUpload);
 router.delete('/delete-avatar/:fileName', delAvatar);
 
 

@@ -23,11 +23,13 @@ const imageFilter = (req, file, cb) => {
 
 const fileStorage = multer.diskStorage({
   destination(req, file, cb) {
-   // Assuming the year is extracted from the request or document
-   const year = req.body.series || 'unknown'; // Use 'unknown' as a default value
+   // Get Series Year & Level
+   const year = req.body.series || 'unknown';
+   const level = req.body.level || 'unknown';
+   const type = req.query.type || 'unknown';
 
    // Create the dynamic subfolder structure
-   const uploadPath = path.join(__dirname, '..', 'uploads', 'files', year);
+   const uploadPath = path.join(__dirname, '..', 'uploads', 'files', type, level, year);
 
    // Ensure the directory exists (create it if not)
    fs.mkdirSync(uploadPath, { recursive: true });
@@ -63,31 +65,3 @@ const file = multer(
 )
 
 module.exports = { image, file };
-
-// const configureMulter = () => {
-//   //Create Storage Object
-//   const storage = new GridFsStorage({
-//     url: process.env.DB_URI,
-//     file: (req, file) => {
-//       return new Promise((resolve, reject) => {
-//         crypto.randomBytes(16, (err, buf) => {
-//           if (err) {
-//             return reject(err);
-//           }
-//           const filename = buf.toString('hex') + path.extname(file.originalname);
-//           const fileInfo = {
-//             filename: filename,
-//             bucketName: 'uploads',
-//             metadata: {
-//               status: 'pending' // Add your custom 'status' property here
-//             }
-//           };
-//           resolve(fileInfo);
-//         });
-//       });
-//     }
-//   });
-//   const upload = multer({ storage });
-
-//   return upload;
-// }
