@@ -15,10 +15,12 @@ import { faPencil,
   faSortDown,
   faFaceSadTear,
   faBars,
-  faCaretLeft, } from '@fortawesome/free-solid-svg-icons';
+  faCaretLeft,
+  faFileArrowDown,
+  faFilePdf, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
-  records: faScroll,
+  reports: faScroll,
   paperclip: faPaperclip,
   calendar: faCalendar,
   pencil: faPencil,
@@ -36,4 +38,6 @@ export const icons = {
   down: faSortDown,
   sad: faFaceSadTear,
   burger: faBars,
+  download: faFileArrowDown,
+  pdf: faFilePdf,
 };

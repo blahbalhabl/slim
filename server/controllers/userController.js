@@ -48,16 +48,30 @@ const refreshAccessToken = async (req, res) => {
 
     return res.status(200).json({
       id: user.id,
+      avatar: user.avatar,
       name: user.username, 
-      role: user.role, 
+      role: user.role,
+      level: user.level,
       token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
   }
 };
 
+const generateDefaultPassword = (email) => {
+  // Take the first 4 characters of the email
+  const emailPrefix = email.slice(0, 4);
+  
+  // Generate 4 random digits
+  const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  
+  // Combine the email prefix and random digits
+  return `${emailPrefix}${randomDigits}`;
+};
+
 const createUser = async (req, res) => {
-  const { email, username, password, role } = req.body; 
+  const avatar = null;
+  const { email, username, role, level } = req.body; 
 
   try {
     // Check if Email Already Exists
@@ -65,23 +79,24 @@ const createUser = async (req, res) => {
     if (isExisting) {
       return res.status(400).json("User Already Exists!");
     }
+
+    // Generate Default Password
+    const defaultPassword = generateDefaultPassword(email);
+
+    const saltRounds = 10;
     // Hash Password with Bcrypt
-    const hash = await bcrypt.hash(password, 10);
+    const hash = await bcrypt.hash(defaultPassword, saltRounds);
     // If No Existing Email is found continue with signup
-    await UserModel.create({ email, username, password: hash, role })
-      .then((data) => {
-        res.status(200).send(data);
-      })
-      .catch((err) => {
-        res.status(400).send(err);
-      });
-  } catch {
-    res.status(500).json("Something went wrong!");
+    const user = await UserModel.create({ avatar, email, username, password: hash, role, level })
+     
+    return res.status(200).json({ user: user, defaultPassword: defaultPassword });
+  } catch (err) {
+    res.status(500).json(`${err}: Something went wrong!`);
   }
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, } = req.body;
 
   try {
     // Find User in DB
@@ -118,8 +133,10 @@ const loginUser = async (req, res) => {
       .status(200)
       .json({
         id: user._id,
+        avatar: user.avatar,
         name: user.username,
         role: user.role,
+        level: user.level,
         token: accessToken,
       });
   } catch (err) {
@@ -129,7 +146,7 @@ const loginUser = async (req, res) => {
 
 const getUsers = async (req, res) => {
   try {
-    const users = await UserModel.find({}).count();
+    const users = await UserModel.find().lean().exec();
     res.status(200).json(users);
   } catch (err) {
     res.status(400).json({err: err});
@@ -141,9 +158,11 @@ const getUser = async (req, res) => {
   try {
     const user = await UserModel.findById(userId);
     res.status(201).json({
+      avatar: user.avatar,
       id: user.id,
       name: user.username,
-      role: user.role
+      role: user.role,
+      level: user.level,
     });
   } catch (err) {
     res.status(400).json({err: err});
@@ -173,6 +192,36 @@ const logoutUser = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const userId = req.id;
+  const { oldpass, newpass, confirm } = req.body;
+
+  try {
+    const user = await UserModel.findById(userId);
+    const passMatch = await bcrypt.compare(oldpass, user.password);
+
+    if(!user) {
+      return res.status(400).json({message: 'User does not exist!'});
+    }
+
+    if(!passMatch) {
+      return res.status(400).json({message: 'Wrong Old Password!'});
+    }
+
+    if(newpass === confirm) {
+      const hash = await bcrypt.hash(newpass, 10);
+      await UserModel.findByIdAndUpdate( userId,
+        { $set: {password: hash }},
+        { new: true }
+      )
+      // await UserModel.updateOne({password, $set: {password: hash}});
+      return res.status(200).json({message: 'Password Changed!'});
+    }
+  } catch (err) {
+    return res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
+
 module.exports = {
   getUsers,
   getUser,
@@ -180,4 +229,5 @@ module.exports = {
   loginUser,
   refreshAccessToken,
   logoutUser,
+  changePassword,
 };

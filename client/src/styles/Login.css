@@ -34,7 +34,7 @@
 }
 
 .Login__Button {
-  background-color: var(--primary-color);
+  background-color: var(--tertiary-color);
 }
 
 .Login__Password__Toggle {
@@ -42,8 +42,8 @@
   top: 53%;
   right: 8%;
   z-index: 1000;
-  background-color: var(--secondary-color);
   cursor: pointer;
+  color: var(--primary-color);
 }
 
 .Login__Error__Message {
