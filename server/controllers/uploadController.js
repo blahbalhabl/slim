@@ -10,7 +10,11 @@ const draftOrdinance = async (req, res) => {
 
   const { number, series, title, status, level } = req.body;
   const file = req.file.filename;
+  const size = req.file.size / 1024;
+  const rounded = Math.round(size * 100) / 100;
   const mimetype = req.file.mimetype;
+
+  console.log(size);
 
   try {
     if (level === 'BARANGAY') {
@@ -29,10 +33,10 @@ const draftOrdinance = async (req, res) => {
     
     if (level === 'BARANGAY') {
       // Create the ordinance in BarangaySchema
-      await Barangay.create({ number, title, series, status, file, mimetype, accessLevel: level });
+      await Barangay.create({ number, title, series, status, file, mimetype, accessLevel: level, size: rounded });
     } else {
       // Create the ordinance in OrdinanceSchema
-      await Ordinance.create({ number, title, series, status, file, mimetype, accessLevel: level });
+      await Ordinance.create({ number, title, series, status, file, mimetype, accessLevel: level, size: rounded });
     }
     res.status(200).json('Successfully Uploaded!')
   } catch (err) {

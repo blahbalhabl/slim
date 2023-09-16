@@ -112,7 +112,7 @@ const Ordinances = () => {
                         {new Date(ordinance.createdAt).toLocaleString()}
                     </td>
                     <td>
-                      Size
+                      { ordinance.size } kb
                     </td>
                     <td className='Ordinances__Center'>
                       <FontAwesomeIcon 
@@ -124,7 +124,11 @@ const Ordinances = () => {
                   </tbody>
                 ) : null
               ))
-            ) : ( <p>No {status} Ordinances</p> )
+            ) : ( <tbody>
+                    <tr>
+                      <td>No {status} Ordinances</td>
+                    </tr>
+                  </tbody> )
           }
         </table>
       </div>
