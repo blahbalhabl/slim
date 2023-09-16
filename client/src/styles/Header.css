@@ -8,6 +8,10 @@
     color: #f1f3fa;
 }
 
+.Header > h3 {
+    margin-left: 30px;
+}
+
 .Header__Container {
     padding: 10px;
 }
@@ -47,4 +51,14 @@
 .Header__Tooltip:hover {
     border-radius: 10px;
     background-color: gray;
+}
+
+.Header__Logo {
+    height: 20px;
+    width: 20px;
+}
+
+.Header_Logo > img {
+    height: 20px;
+    width: 20px;
 }

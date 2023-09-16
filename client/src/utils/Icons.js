@@ -17,7 +17,8 @@ import { faPencil,
   faBars,
   faCaretLeft,
   faFileArrowDown,
-  faFilePdf, } from '@fortawesome/free-solid-svg-icons';
+  faFilePdf,
+  faXmark, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   reports: faScroll,
@@ -40,4 +41,5 @@ export const icons = {
   burger: faBars,
   download: faFileArrowDown,
   pdf: faFilePdf,
+  close: faXmark,
 };

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import useLogout from "../hooks/useLogout";
@@ -11,11 +12,17 @@ const Header = () => {
   const navigate = useNavigate();
   const logout = useLogout();
   const { auth } = useAuth();
-
+  const [ logo, setLogo ] = useState();
   const signOut = async () => {
     await logout();
     navigate('/login');
   }
+
+  const sendRequest = async () => {
+    const siteLogo = `${BASE_URL}/uploads/images/site-logo.png`;
+    setLogo(siteLogo);
+  };
+ 
   const headerTooltip = [
     {
       buttons: [
@@ -39,8 +46,15 @@ const Header = () => {
     },
   ]
 
+  useEffect(() => {
+    sendRequest()
+  }, [])
+
   return (
     <div className="Header">
+      {/* <div className="Header__Logo"> */}
+      { logo ? <img className="Header_Logo" src={logo} style={{ width: '70px', height: '70px' }} /> : <FontAwesomeIcon icon={icons.user} />}
+      {/* </div> */}
       <h3>SLIM: Sanggunian Legislative Information Management</h3>
       <div className="Header__Container">
         {auth && (

@@ -1,3 +1,5 @@
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { icons } from '../utils/Icons';
 import '../styles/Modal.css'
 
 const Modal = ({ isOpen, closeModal, children }) => {
@@ -6,7 +8,7 @@ const Modal = ({ isOpen, closeModal, children }) => {
     <div className="Modal">
       <div className="Modal__Container">
         <button className="Modal__Close__Button" onClick={closeModal}>
-          Close
+          <FontAwesomeIcon icon={icons.close}/>
         </button>
         {children}
       </div>

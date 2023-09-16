@@ -1,12 +1,16 @@
 import Modal from './Modal';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import {roles} from '../utils/userRoles';
 import '../styles/CreateOrdinances.css'
 
 const CreateOrdinances = () => {
+  const role = roles.role;
+  const level = roles.level;
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  const [uploading, setUploading] = useState(false);
   const [inputs, setInputs] = useState({
     number: "",
     series: "",
@@ -34,6 +38,7 @@ const CreateOrdinances = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     uploadFile();
+    setUploading(false);
   };
 
   const uploadFile = async () => {
@@ -55,12 +60,14 @@ const CreateOrdinances = () => {
 
   return (
     <div className="CreateOrdinances">
+      <h1>List of Ordinances</h1>
       <button onClick={openModal}>Create New Ordinance</button>
       <Modal 
         isOpen={isModalOpen} 
         closeModal={closeModal}
       >
         <div className='CreateOrdinances__Container'>
+          <h3>Submit a Draft {auth.level === level.lgu ? 'Municipal' : 'Barangay' } Level Ordinance</h3>
             <form onSubmit={handleSubmit}>
               <div className='CreateOrdinances__Title'>
                 <label htmlFor="ordinance-number">Number:</label>
@@ -69,6 +76,7 @@ const CreateOrdinances = () => {
                   type="number"
                   name='number'
                   id='ordinance-number'
+                  placeholder="e.g. '01'"
                   onChange={handleChange}
                 />
                 <label htmlFor="ordinance-series">Series:</label>
@@ -76,7 +84,8 @@ const CreateOrdinances = () => {
                   className='CreateOrdinances__Input'
                   type="number"
                   name='series'
-                  id='ordinance-number'
+                  id='ordinance-series'
+                  placeholder="e.g. '2021'"
                   onChange={handleChange}
                 />
                 <label htmlFor="ordinance-title">Title:</label>
@@ -85,38 +94,29 @@ const CreateOrdinances = () => {
                   type="text"
                   name='title'
                   id='ordinance-title'
+                  placeholder="e.g. 'First Amendment'"
                   onChange={handleChange}
-                />
-                <label htmlFor="ordinance-status">Status:</label>
-                <input 
-                  className='CreateOrdinances__Input'
-                  type="text"
-                  name='ordinance-status'
-                  id='ordinance-status'
-                  value={'draft'}
-                  readOnly
-                />
-                <label htmlFor="ordinance-level">Level:</label>
-                <input 
-                  className='CreateOrdinances__Input'
-                  type="text"
-                  name='ordinance-level'
-                  id='ordinance-level'
-                  value={auth.level}
-                  readOnly
                 />
               </div>
               <div className="CreateOrdinances__Content">
-              <label htmlFor="file">File:</label>
-                <input 
-                  className='CreateOrdinances__Input'
-                  type="file"
-                  name='file'
-                  id='file'
-                  onChange={handleFileChange} 
-                />
+                { uploading === true ? (<>
+                  <label htmlFor="file">File:</label>
+                  <input 
+                    className='CreateOrdinances__File'
+                    type="file"
+                    name='file'
+                    id='file'
+                    onChange={handleFileChange} 
+                  /></>) : (
+                    <button 
+                      className='CreateOrdinances__Button' 
+                      onClick={() => setUploading(true)} >
+                        Submit the PDF Ordinance File
+                    </button>
+                  ) }
+              
               </div>
-              <button type='submit'>Submit</button>
+              <button className='CreateOrdinances__Button' type='submit'>Submit</button>
             </form>
         </div>
       </Modal>

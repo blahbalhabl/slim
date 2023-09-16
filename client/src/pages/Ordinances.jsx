@@ -80,9 +80,30 @@ const Ordinances = () => {
 
   return (
     <div className="Ordinances">
-      <CreateOrdinances />
+      <div className="Ordinances__Card">
+        <CreateOrdinances />
+      </div>
       <div className="Ordinances__Container">
       <h3 className='Ordinances__Top__Title'>{status.toUpperCase()} ORDINANCES</h3>
+      <div className="Ordinances__Legend">
+        Legend:
+        <div>
+          <div style={{backgroundColor: 'orange'}}></div>
+          <p>Draft</p>
+        </div>
+        <div>
+          <div style={{backgroundColor: 'green'}}></div>
+          <p>Enacted</p>
+        </div>
+        <div>
+          <div style={{backgroundColor: 'blue'}}></div>
+          <p>Approved</p>
+        </div>
+        <div>
+          <div style={{backgroundColor: 'red'}}></div>
+          <p>Amended</p>
+        </div>
+      </div>
         <table className="Ordinances__Content">
           <thead>
             <tr className="Ordinances__Header">
@@ -96,9 +117,10 @@ const Ordinances = () => {
           { ordinances.length > 0 ? (
               ordinances.map((ordinance, i) => (
                 (ordinance.status === status && ordinance.accessLevel === auth.level) ? (
-                  <tbody key={i}>
-                  <tr 
-                    className='Ordinances__Link' 
+                  <tbody key={i} >
+                  <tr
+                    className='Ordinances__Link'
+                    style={{color: ordinance.status === 'draft' ? 'orange' : 'black'}}
                     key={i}>
                     <td>
                       { ordinance.mimetype === 'application/pdf' && (<FontAwesomeIcon icon={icons.pdf}/>)}

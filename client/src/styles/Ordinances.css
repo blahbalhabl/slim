@@ -35,7 +35,7 @@
 .Ordinances__Link:hover td {
   border-collapse: separate;
   border-spacing: 0;
-  border: none; /* Add this style to remove borders on hover */
+  border: none;
 }
 
 .Ordinances__Content {
@@ -59,4 +59,35 @@ td, th {
 
 .Ordinances__Download {
   cursor: pointer;
+}
+
+.Ordinances__Card {
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  background-color: white;
+  width: 95%;
+  height: 100px;
+  margin-bottom: 20px;
+  border-radius: 15px;
+  box-shadow: 3px 3px 3px #b6b5b5;
+}
+
+.Ordinances__Legend {
+  background-color: white;
+  border-radius: 15px;
+  margin: 10px 0px 10px 0px;
+  padding: 20px;
+  box-shadow: 3px 3px 3px #b6b5b5;
+}
+
+.Ordinances__Legend > div {
+  display: flex;
+}
+
+.Ordinances__Legend > div > div {
+  margin: 3px;
+  height: 15px;
+  width: 15px;
+  border-radius: 5px;
 }
