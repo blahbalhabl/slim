@@ -38,9 +38,9 @@ const draftOrdinance = async (req, res) => {
       // Create the ordinance in OrdinanceSchema
       await Ordinance.create({ number, title, series, status, file, mimetype, accessLevel: level, size: rounded });
     }
-    res.status(200).json('Successfully Uploaded!')
+    res.status(200).json({message: 'Successfully Uploaded!'});
   } catch (err) {
-    res.status(400).json({Error: err, err: 'Something went wrong.'});
+    res.status(400).json({Error: err, message: 'Something went wrong.'});
   }
 };
 

@@ -12,11 +12,15 @@ const UserProfile = () => {
   const axiosPrivate = useAxiosPrivate();
   const [user, setUser] = useState();
   const [avatar, setAvatar] = useState();
+  const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [inputs, setInputs] = useState({
     oldpass: "",
     newpass: "",
     confirm: "",
   });
+  const [visible, setVisible] = useState(false);
+  const inputType = visible ? "text" : "password";
+  const toggleIcon = visible ? <FontAwesomeIcon icon={icons.eye} /> : <FontAwesomeIcon icon={icons.eyeslash} />;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -50,6 +54,14 @@ const UserProfile = () => {
     formData.append('avatar', avatar);
     uploadAvatar();
   };
+
+  const openAvatar = () => {
+    return (
+      <>
+      
+      </>
+    )
+  }
 
   const uploadAvatar = async () => {
     try {
@@ -86,6 +98,16 @@ const UserProfile = () => {
     }
   }
 
+  
+
+  const handleAvatarUpdate = () => {
+    setIsButtonVisible(true);
+  };
+  
+  const handleAvatarLeave = () => {
+    setIsButtonVisible(false);
+  };
+
   useEffect(() => {
     sendRequest()
     .then((data) => {
@@ -94,28 +116,43 @@ const UserProfile = () => {
   },[])
   
   return (
-    <div>
+    <div className="Profile">
       { user ? (
-      <div className="Profile">
-        <div className="Profile__Avatar">
-          { user.avatar ? <img src={`${BASE_URL}/uploads/images/${user.avatar}`}/> : <FontAwesomeIcon icon={icons.user} />}
+      <div className="Profile__Container">
+        <div className="Profile__Card">
+          <div className="Profile__Avatar" onMouseEnter={handleAvatarUpdate}
+            onMouseLeave={handleAvatarLeave}>
+            {user.avatar ? (
+              <>
+                <img src={`${BASE_URL}/uploads/images/${user.avatar}`} />
+                {isButtonVisible && 
+                <div className="Profile__Avatar__Change">
+                  <label htmlFor="avatar-input">Upload Avatar</label>
+                  <input 
+                    // hidden
+                    type="file" 
+                    name="avatar-input" 
+                    id="avatar-input" 
+                    accept="image/*"
+                    onChange={handleAvatarChange}
+                  />
+                  <button onClick={handleUpload}>Upload</button>
+                </div>
+                }
+              </>
+            ) : (
+              <FontAwesomeIcon icon={icons.user} />
+            )}
+          </div>
+          <div className="Profile__Information">
+            <h2>{user.name}</h2>
+            <p>{user.role}</p>
+          </div>
         </div>
-        <label htmlFor="avatar-input">Upload Avatar
-          <input 
-            hidden
-            type="file" 
-            name="avatar-input" 
-            id="avatar-input" 
-            accept="image/*"
-            onChange={handleAvatarChange} 
-          />
-          <button onClick={handleUpload}>Update Avatar</button>
-        </label>
-        <h1>User Profile:</h1>
-        <p>User ID: {user.id}</p>
-        <p>User Name: {user.name}</p> 
-        <p>User Role: {user.role}</p> 
-        <button onClick={openModal}>Change Password</button>
+        <div className="Profile__Card__Right">
+              <h2>Security</h2>
+              <button onClick={openModal}>Change Password</button>
+        </div>
         <Modal 
           isOpen={isModalOpen}
           closeModal={closeModal}
@@ -125,7 +162,7 @@ const UserProfile = () => {
               <label htmlFor="oldpass">Old Password</label>
               <input
                 className="Profile__Input"
-                type="password"
+                type={inputType}
                 name="oldpass"
                 id="oldpass"
                 onChange={handleChange}
@@ -134,7 +171,7 @@ const UserProfile = () => {
               <label htmlFor="newpass">New Password</label>
               <input
                 className="Profile__Input"
-                type="password"
+                type={inputType}
                 name="newpass"
                 id="newpass"
                 onChange={handleChange}
@@ -143,13 +180,22 @@ const UserProfile = () => {
               <label htmlFor="confirm">Confirm Password</label>
               <input
                 className="Profile__Input"
-                type="password"
+                type={inputType}
                 name="confirm"
                 id="confirm"
                 onChange={handleChange}
                 value={inputs.confirm}
               />
-              <button onClick={handleChangePass}>Change Password</button>
+              <span
+                className="Profile__Password__Toggle"
+                onClick={() => setVisible(visible => !visible)}>
+                  {toggleIcon}
+              </span>
+              <button
+                className="Profile__Modal__Button"
+                onClick={handleChangePass}>
+                  Change Password
+              </button>
             </form>
           </div>
         </Modal>

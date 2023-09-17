@@ -1,12 +1,14 @@
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import CreateOrdinances from '../components/CreateOrdinances';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Loader from '../components/Loader';
+import Modal from '../components/Modal';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { icons } from '../utils/Icons'
 import '../styles/Ordinances.css'
+
 
 const Ordinances = () => {
   const { auth } = useAuth();
@@ -14,6 +16,10 @@ const Ordinances = () => {
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
   const [ordinances, setOrdinances] = useState();
+  const [selectedOrdinance, setSelectedOrdinance] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   const sendRequest = async () => {
     try {
@@ -51,7 +57,12 @@ const Ordinances = () => {
     } catch (err) {
       console.log(err);
     }
-  }
+  };
+
+  const handleOrdinanceClick = (ordinance) => {
+    setSelectedOrdinance(ordinance);
+    openModal(); 
+  };
 
   useEffect(() => {
     let isMounted = true;
@@ -120,13 +131,25 @@ const Ordinances = () => {
                   <tbody key={i} >
                   <tr
                     className='Ordinances__Link'
-                    style={{color: ordinance.status === 'draft' ? 'orange' : 'black'}}
+                    style={
+                      {color: 
+                        ordinance.status === 'draft' 
+                        ? 'orange' 
+                        : ordinance.status === 'enacted'
+                        ? 'green'
+                        : ordinance.status === 'approved'
+                        ? 'blue'
+                        : ordinance.status === 'amended'
+                        ? 'red' : 'black'
+                      }
+                    }
                     key={i}>
                     <td>
                       { ordinance.mimetype === 'application/pdf' && (<FontAwesomeIcon icon={icons.pdf}/>)}
                     </td>
                     <td 
-                      className='Ordinances__Number'>
+                      className='Ordinances__Number' onClick={() => handleOrdinanceClick(ordinance)}
+                    >
                         <p>ORDINANCE NO {ordinance.number}, Series of {ordinance.series} {ordinance.title.toUpperCase()}</p>
                     </td>
                     <td 
@@ -134,7 +157,7 @@ const Ordinances = () => {
                         {new Date(ordinance.createdAt).toLocaleString()}
                     </td>
                     <td>
-                      { ordinance.size } kb
+                      { ordinance.size } k
                     </td>
                     <td className='Ordinances__Center'>
                       <FontAwesomeIcon 
@@ -154,6 +177,19 @@ const Ordinances = () => {
           }
         </table>
       </div>
+      {selectedOrdinance && (
+        <Modal isOpen={isModalOpen} closeModal={closeModal}>
+          <div className="Ordinances__Details">
+            <div className="Ordinances__Details__Title">
+              <h3>{`ORDINANCE NO ${selectedOrdinance.number}, Series of ${selectedOrdinance.series}`}</h3>
+              <p>{selectedOrdinance.title}</p>
+            </div>
+            <div className="Ordinances__Details__Content">
+              
+            </div>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }

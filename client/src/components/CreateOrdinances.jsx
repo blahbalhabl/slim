@@ -10,6 +10,7 @@ const CreateOrdinances = () => {
   const level = roles.level;
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
+  const [message, setMessage] = useState();
   const [uploading, setUploading] = useState(false);
   const [inputs, setInputs] = useState({
     number: "",
@@ -50,9 +51,15 @@ const CreateOrdinances = () => {
       formData.append('status', 'draft');
       formData.append('level', auth.level);
       formData.append('file', file);
-      await axiosPrivate.post('/upload/ordinance/draft?type=ordinances', formData, {
+      const res = await axiosPrivate.post('/upload/ordinance/draft?type=ordinances', formData, {
         headers: {'Content-Type': 'multipart/form-data'}
-      });
+      })
+
+      if (res.status === 200 || 401) {
+        setMessage(res.data.message);
+      } else {
+        setMessage('Error on Uploading Ordinance')
+      }
     } catch (err) {
       console.log(err);
     }
@@ -114,10 +121,10 @@ const CreateOrdinances = () => {
                         Submit the PDF Ordinance File
                     </button>
                   ) }
-              
               </div>
               <button className='CreateOrdinances__Button' type='submit'>Submit</button>
             </form>
+            {message && <div className="alert">{message}</div>}
         </div>
       </Modal>
     </div>

@@ -50,4 +50,4 @@ brgySchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Barangay-Ordinances", brgySchema);
+module.exports = mongoose.model("Ordinances-Barangay", brgySchema);

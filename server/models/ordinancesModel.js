@@ -50,4 +50,4 @@ ordinanceSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("LGU-Ordinances", ordinanceSchema);
+module.exports = mongoose.model("Ordinances-LGU", ordinanceSchema);

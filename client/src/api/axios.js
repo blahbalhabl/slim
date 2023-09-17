@@ -1,6 +1,5 @@
 import axios from "axios";
-export const BASE_URL = 'http://192.168.100.26:3500' // Change the IP address to the IP Address hosting the server and Web App
-
+export const BASE_URL = import.meta.env.VITE_REACT_APP_API_URL || 'http://localhost:3500';
 axios.defaults.withCredentials = true;
 
 export default axios.create({

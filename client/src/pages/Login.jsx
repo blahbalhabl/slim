@@ -42,28 +42,28 @@ const Login = () => {
     setForgot(res.data.auth);
   };
 
-  useEffect(() => {
-    if (password) {
-      const emailData = {
-        email: inputs.email,
-        subject: `OTP Password Reset Request`,
-        text: `
-          <h1>Forgot Password?.</h1> 
-          <h3>If you requested your password to be changed:</h3>
-          </br>
-          </br>
-          <p>For email: ${inputs.email}</p>
-          <h1>:${forgot}</h1>
-          <p>Never share OTP codes to anyone.</p>`,
-      };
+  // useEffect(() => {
+    // if (password) {
+      // const emailData = {
+      //   email: inputs.email,
+      //   subject: `OTP Password Reset Request`,
+      //   text: `
+      //     <h1>Forgot Password?.</h1> 
+      //     <h3>If you requested your password to be changed:</h3>
+      //     </br>
+      //     </br>
+      //     <p>For email: ${inputs.email}</p>
+      //     <h1>:${forgot}</h1>
+      //     <p>Never share OTP codes to anyone.</p>`,
+      // };
       
-      axiosPrivate.post('/send-email', emailData, {
-        headers: {'Content-Type': 'application/json'}
-      }).catch((err) => {
-        console.log('Error sending email:', err);
-      });
-    }
-  }, [password, inputs.email, axiosPrivate]);
+      // axiosPrivate.post('/send-email', emailData, {
+      //   headers: {'Content-Type': 'application/json'}
+      // }).catch((err) => {
+      //   console.log('Error sending email:', err);
+      // });
+    // }
+  // }, [ inputs.email, axiosPrivate]);
 
   useEffect(() => {
     localStorage.setItem('persist', persist);
