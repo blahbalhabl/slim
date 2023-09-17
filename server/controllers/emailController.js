@@ -41,4 +41,40 @@ const sendEmail = async (req, res) => {
   }
 }
 
-module.exports = { sendEmail };
+const forgotEmail = async (req, res) => {
+  const {email, subject, text} = req.body;
+
+  try {
+    const accessToken = await oAuth2Client.getAccessToken();
+
+    const transport = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.G_MAIL,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET,
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken: accessToken,
+      },
+    });
+
+    const mailOptions = {
+      from: `FORGOT PASSWORD? <${process.env.G_MAIL}>`,
+      to: email,
+      subject: subject,
+      text: text,
+      html: text
+    }
+
+    const result = await transport.sendMail(mailOptions)
+    return res.status(200).json(result);
+  } catch (err) {
+    return res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
+
+module.exports = { 
+  sendEmail, 
+  forgotEmail,
+};

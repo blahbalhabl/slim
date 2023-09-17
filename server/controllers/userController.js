@@ -69,6 +69,11 @@ const generateDefaultPassword = (email) => {
   return `${emailPrefix}${randomDigits}`;
 };
 
+const forgotPassword = (req, res) => {
+  const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  return res.status(200).json({auth: randomDigits});
+}
+
 const createUser = async (req, res) => {
   const avatar = null;
   const { email, username, role, level } = req.body; 
@@ -214,13 +219,43 @@ const changePassword = async (req, res) => {
         { $set: {password: hash }},
         { new: true }
       )
-      // await UserModel.updateOne({password, $set: {password: hash}});
       return res.status(200).json({message: 'Password Changed!'});
     }
   } catch (err) {
     return res.status(500).json({err, message: 'Internal Server Error'});
   }
 }
+
+// const forgotPassword = async (req, res) => {
+//   const userId = req.id;
+//   const { newpass, confirm } = req.body;
+
+//   try {
+//     const user = await UserModel.findById(userId);
+
+//     if(!user) {
+//       return res.status(400).json({message: 'User does not exist!'});
+//     }
+  
+//     await UserModel.findByIdAndUpdate( userId,
+//       { $set: {password: hash }},
+//       { new: true })
+
+//     if(newpass === confirm) {
+//       const hash = await bcrypt.hash(newpass, 10);
+//       await UserModel.findByIdAndUpdate( userId,
+//         { $set: {password: hash }},
+//         { new: true }
+//       )
+
+//     const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  
+//       return res.status(200).json({auth: randomDigits, message: 'Password Changed!'});
+//     }
+//   } catch (err) {
+//     return res.status(500).json({err, message: 'Internal Server Error'});
+//   }
+// }
 
 module.exports = {
   getUsers,
@@ -230,4 +265,5 @@ module.exports = {
   refreshAccessToken,
   logoutUser,
   changePassword,
+  forgotPassword,
 };

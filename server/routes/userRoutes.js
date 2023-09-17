@@ -7,6 +7,7 @@ const {
   refreshAccessToken,
   logoutUser,
   changePassword,
+  forgotPassword,
 } = require("../controllers/userController");
 const { 
   avatarUpload, 
@@ -18,6 +19,7 @@ const { image } = require('../middlewares/configureMulter')
 const router = Router();
 
 // General Routes
+router.get('/forgot-password', forgotPassword);
 router.post("/login", loginUser);
 router.post("/refresh", refreshAccessToken);
 router.post("/logout", logoutUser);
