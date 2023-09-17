@@ -22,12 +22,12 @@ const Dashboard = () => {
           { auth && auth?.role === role.adn 
             ? <Admin />
             : auth && auth?.role === role.spr
-            ? <UserProfile />
+            ? <Admin />
             : null
           }
 
       </div>
-      <Calendar />
+      {/* <Calendar /> */}
     </div>
   )
 };

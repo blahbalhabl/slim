@@ -8,8 +8,13 @@
     color: #f1f3fa;
 }
 
-.Header > h3 {
+.Header__Title > h3 {
     margin-left: 30px;
+}
+
+.Header__Title {
+    display: flex;
+    align-items: center;
 }
 
 .Header__Container {

@@ -71,11 +71,15 @@ const countOrdinances = async (req, res) => {
       response.pending = await Ordinance.countDocuments({status: 'pending'}).exec();
       response.vetoed = await Ordinance.countDocuments({status: 'vetoed'}).exec();
       response.approved = await Ordinance.countDocuments({status: 'approved'}).exec();
+      response.draft = await Ordinance.countDocuments({status: 'draft'}).exec();
+      response.enacted = await Ordinance.countDocuments({status: 'enacted'}).exec();
     } else {
       response.all = await Barangay.countDocuments().exec();
       response.pending = await Barangay.countDocuments({status: 'pending'}).exec();
       response.vetoed = await Barangay.countDocuments({status: 'vetoed'}).exec();
       response.approved = await Barangay.countDocuments({status: 'approved'}).exec();
+      response.draft = await Ordinance.countDocuments({status: 'draft'}).exec();
+      response.enacted = await Ordinance.countDocuments({status: 'enacted'}).exec();
     }
      
     res.status(200).json(response);

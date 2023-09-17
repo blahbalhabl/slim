@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useAuth from '../hooks/useAuth';
 import CreateOrdinances from '../components/CreateOrdinances';
 import Loader from '../components/Loader';
 import Modal from '../components/Modal';
+import BreadCrumbs from '../components/BreadCrumbs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { icons } from '../utils/Icons'
 import '../styles/Ordinances.css'
@@ -13,6 +14,7 @@ import '../styles/Ordinances.css'
 const Ordinances = () => {
   const { auth } = useAuth();
   const { status } = useParams();
+  const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
   const [ordinances, setOrdinances] = useState();
@@ -20,6 +22,12 @@ const Ordinances = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const pathnames = location.pathname.split('/').filter((item) => item !== '');
+
+  const breadcrumbs = pathnames.map((name, index) => ({
+    label: name,
+    url: `/${pathnames.slice(0, index + 1).join('/')}`,
+  }));
 
   const sendRequest = async () => {
     try {
@@ -91,6 +99,7 @@ const Ordinances = () => {
 
   return (
     <div className="Ordinances">
+      <BreadCrumbs items={breadcrumbs} />
       <div className="Ordinances__Card">
         <CreateOrdinances />
       </div>

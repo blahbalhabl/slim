@@ -52,10 +52,10 @@ const Header = () => {
 
   return (
     <div className="Header">
-      {/* <div className="Header__Logo"> */}
-      { logo ? <img className="Header_Logo" src={logo} style={{ width: '70px', height: '70px' }} /> : <FontAwesomeIcon icon={icons.user} />}
-      {/* </div> */}
-      <h3>SLIM: Sanggunian Legislative Information Management</h3>
+      <div className="Header__Title">
+        { logo ? <img className="Header_Logo" src={logo} style={{ width: '70px', height: '70px' }} /> : <FontAwesomeIcon icon={icons.user} />}
+        <h3>SLIM: Sanggunian Legislative Information Management</h3>
+      </div>
       <div className="Header__Container">
         {auth && (
           <div className="Header__Info">
