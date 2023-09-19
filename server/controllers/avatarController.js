@@ -56,8 +56,29 @@ const delAvatar = async (req, res) => {
   }
 };
 
+const uploadLogo = async (req, res) => {
+  try {
+    const fileName = req.params.file;
+    const newFile = req.body.file;
+
+    if(!req.file) {
+      return res.status(400).json({err: 'No file found!'})
+    }
+
+    //  Delete the file from server
+    const filePath = `../server/uploads/images/${fileName}`;
+    await fs.promises.unlink(filePath);
+
+    res.status(200).json({file: newFile, message: 'Successfully Updated Logo!'});
+
+  } catch (err) {
+    res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
+
 module.exports = {
   avatarUpload,
   getAvatars,
   delAvatar,
+  uploadLogo,
 }

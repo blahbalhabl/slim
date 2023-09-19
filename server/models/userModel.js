@@ -31,6 +31,15 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  secret: {
+    type: String,
+    required: false,
+  },
+  is2faOn: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

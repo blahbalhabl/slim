@@ -34,12 +34,18 @@
 }
 
 .Login__Button {
+  border: none;
+  margin-bottom: 20px;
+  padding: 5px;
+  border-radius: 20px;
+  font-size: 1.1rem;
+  width: 25%;
   background-color: var(--tertiary-color);
 }
 
 .Login__Password__Toggle {
   position: absolute;
-  top: 53%;
+  bottom: 165px;
   right: 8%;
   z-index: 1000;
   cursor: pointer;
@@ -55,3 +61,16 @@
   border-radius: 5px;
   background-color: var(--error-color);
 }
+.Login__Container > h4{
+  color: white;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+@media only screen and (max-width: 600px) {
+  .Login__Container {
+    width: 70vw;
+  }
+}
+
+

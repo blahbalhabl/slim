@@ -2,6 +2,8 @@ require("dotenv").config();
 const UserModel = require("../models/userModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const speakeasy = require("speakeasy");
+const qrcode = require('qrcode');
 
 const createAccessToken = (user) => {
   return jwt.sign(
@@ -69,36 +71,71 @@ const generateDefaultPassword = (email) => {
   return `${emailPrefix}${randomDigits}`;
 };
 
-const createUser = async (req, res) => {
-  const avatar = null;
-  const { email, username, role, level } = req.body; 
+const forgotPassword = (req, res) => {
+  const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  return res.status(200).json({auth: randomDigits});
+}
 
+const createUser = async (req, res) => {
   try {
+    const avatar = null;
+    const { email, username, role, level } = req.body;
+
     // Check if Email Already Exists
     const isExisting = await UserModel.findOne({ email });
     if (isExisting) {
       return res.status(400).json("User Already Exists!");
     }
 
+    // Generate a secret key
+    const secret = speakeasy.generateSecret({ length: 20 });
+
+    // Store the base32 secret in the database
+    const base32Secret = secret.base32;
+
     // Generate Default Password
     const defaultPassword = generateDefaultPassword(email);
 
-    const saltRounds = 10;
     // Hash Password with Bcrypt
-    const hash = await bcrypt.hash(defaultPassword, saltRounds);
-    // If No Existing Email is found continue with signup
-    const user = await UserModel.create({ avatar, email, username, password: hash, role, level })
-     
-    return res.status(200).json({ user: user, defaultPassword: defaultPassword });
+    const hash = await bcrypt.hash(defaultPassword, 10);
+
+    // If No Existing Email is found, continue with signup
+    const user = await UserModel.create({
+      avatar,
+      email,
+      username,
+      password: hash,
+      role,
+      level,
+      secret: base32Secret,
+    });
+
+    // Generate the OTP authentication URL using the stored base32 secret
+      const label = email;
+      const issuer = 'SLIM';
+  
+    const otpAuthUrl = `otpauth://totp/${encodeURIComponent(issuer)}:${encodeURIComponent(label)}?secret=${base32Secret}&issuer=${encodeURIComponent(issuer)}`;
+
+    const qrCodeUrl = await new Promise((resolve, reject) => {
+      qrcode.toDataURL(otpAuthUrl, (err, url) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(url);
+        }
+      });
+    });
+
+    res.status(200).json({ user, defaultPassword, qrCode: qrCodeUrl, secret: base32Secret });
   } catch (err) {
     res.status(500).json(`${err}: Something went wrong!`);
   }
 };
 
-const loginUser = async (req, res) => {
-  const { email, password, } = req.body;
 
+const loginUser = async (req, res) => {
   try {
+    const { email, password } = req.body;
     // Find User in DB
     const user = await UserModel.findOne({ email });
 
@@ -113,25 +150,27 @@ const loginUser = async (req, res) => {
       return res.status(400).json("Invalid Credentials");
     }
 
-    // Generate JWT Access Token and Refresh Token
-    const accessToken = createAccessToken(user);
-    const refreshToken = createRefreshToken(user);
+    if (user.is2faOn) {
+      // If the user has 2FA enabled, return a flag indicating that 2FA is required
+      return res.status(201).json({ otpRequired: true });
+    } else {
+      // If 2FA is not required, generate JWT Access Token and Refresh Token
+      const accessToken = createAccessToken(user);
+      const refreshToken = createRefreshToken(user);
 
-    // Save Refresh Token in Database
-    user.refresh = refreshToken;
-    const result = await user.save();
+      // Save Refresh Token in Database
+      user.refresh = refreshToken;
+      await user.save();
 
-    // Send Refresh Token through httpOnly cookie
-    res.cookie("refresh", refreshToken, {
-      path: "/api",
-      expires: new Date(Date.now() + 1000 * process.env.REFRESH_EXPIRES),
-      httpOnly: true,
-      sameSite: "lax",
-    });
+      // Send Refresh Token through httpOnly cookie
+      res.cookie("refresh", refreshToken, {
+        path: "/api",
+        expires: new Date(Date.now() + 1000 * process.env.REFRESH_EXPIRES),
+        httpOnly: true,
+        sameSite: "lax",
+      });
 
-    return res
-      .status(200)
-      .json({
+      return res.status(200).json({
         id: user._id,
         avatar: user.avatar,
         name: user.username,
@@ -139,10 +178,84 @@ const loginUser = async (req, res) => {
         level: user.level,
         token: accessToken,
       });
+    }
   } catch (err) {
     return res.status(400).json({ err, msg: "User does not exist" });
   }
 };
+
+const verifyOTP = async (req, res) => {
+  try {
+    const { email, otp } = req.body;
+    const user = await UserModel.findOne({ email });
+
+    if (!user) {
+      return res.status(400).json("User does not exist!");
+    }
+
+    if (!user.is2faOn) {
+      return res.status(400).json("2FA not enabled for this user");
+    }
+
+    const isValid = speakeasy.totp.verify({
+      secret: user.secret,
+      encoding: "base32",
+      token: otp,
+    });
+
+    if (isValid) {
+      // If OTP verification is successful, generate JWT Access Token and Refresh Token
+      const accessToken = createAccessToken(user);
+      const refreshToken = createRefreshToken(user);
+
+      // Save Refresh Token in Database
+      user.refresh = refreshToken;
+      await user.save();
+
+      // Send Refresh Token through httpOnly cookie
+      res.cookie("refresh", refreshToken, {
+        path: "/api",
+        expires: new Date(Date.now() + 1000 * process.env.REFRESH_EXPIRES),
+        httpOnly: true,
+        sameSite: "lax",
+      });
+
+      return res.status(200).json({
+        id: user._id,
+        avatar: user.avatar,
+        name: user.username,
+        role: user.role,
+        level: user.level,
+        token: accessToken,
+      });
+    } else {
+      return res.status(400).json("Invalid OTP");
+    }
+  } catch (err) {
+    return res.status(500).json({ err, msg: "Internal Server Error" });
+  }
+};
+
+const useOtp = async (req, res) => {
+  try {
+    const userId = req.id;
+    const { is2faOn } = req.body;
+    console.log(req.body)
+
+    const user = await UserModel.findById(userId);
+
+    if(!user) {
+      res.status(400).json({message: 'User does not exist!'});
+    }
+
+    user.is2faOn = is2faOn;
+    await user.save();
+
+    res.status(200).json({user: user, message: '2FA Updated!'});
+  } catch (err) {
+    res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
 
 const getUsers = async (req, res) => {
   try {
@@ -214,7 +327,6 @@ const changePassword = async (req, res) => {
         { $set: {password: hash }},
         { new: true }
       )
-      // await UserModel.updateOne({password, $set: {password: hash}});
       return res.status(200).json({message: 'Password Changed!'});
     }
   } catch (err) {
@@ -222,12 +334,46 @@ const changePassword = async (req, res) => {
   }
 }
 
+// const forgotPassword = async (req, res) => {
+//   const userId = req.id;
+//   const { newpass, confirm } = req.body;
+
+//   try {
+//     const user = await UserModel.findById(userId);
+
+//     if(!user) {
+//       return res.status(400).json({message: 'User does not exist!'});
+//     }
+  
+//     await UserModel.findByIdAndUpdate( userId,
+//       { $set: {password: hash }},
+//       { new: true })
+
+//     if(newpass === confirm) {
+//       const hash = await bcrypt.hash(newpass, 10);
+//       await UserModel.findByIdAndUpdate( userId,
+//         { $set: {password: hash }},
+//         { new: true }
+//       )
+
+//     const randomDigits = Math.floor(1000 + Math.random() * 9000).toString();
+  
+//       return res.status(200).json({auth: randomDigits, message: 'Password Changed!'});
+//     }
+//   } catch (err) {
+//     return res.status(500).json({err, message: 'Internal Server Error'});
+//   }
+// }
+
 module.exports = {
   getUsers,
   getUser,
   createUser,
   loginUser,
+  verifyOTP,
+  useOtp,
   refreshAccessToken,
   logoutUser,
   changePassword,
+  forgotPassword,
 };

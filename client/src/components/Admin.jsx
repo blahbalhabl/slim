@@ -1,18 +1,19 @@
 import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import { useNavigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 import Loader from "./Loader";
+import { icons } from "../utils/Icons";
 
 import '../styles/Admin.css'
 
 const Users = () => {
 
   const { auth } = useAuth();
+  const navigate = useNavigate();
   const [users, setUser] = useState();
   const [ordinances, setOrdinances] = useState();
-  const [pending, setPending] = useState();
-  const [vetoed, setVetoed] = useState();
-  const [approved, setApproved] = useState();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const axiosPrivate = useAxiosPrivate();
@@ -41,10 +42,7 @@ const Users = () => {
       }) => { 
         if ( isMounted ) {
           setUser(users);
-          setOrdinances(ordinances.all);
-          setPending(ordinances.pending);
-          setVetoed(ordinances.vetoed);
-          setApproved(ordinances.approved);
+          setOrdinances(ordinances);
         }
         setLoading(false);
       })
@@ -69,25 +67,54 @@ const Users = () => {
   return (
     <div className="Admin">
       <div className="Admin__Container">
-        <div className="Admin__Card">
-          <p>Number of Users:</p>
-          <p>{ users.length }</p>
+        <div className="Admin__Card users">
+          <div className="Admin__Card__Info">
+            <p>Number of Users:</p>
+            <p>{ users.length }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.user}/></span>
         </div>
-        <div className="Admin__Card">
-          <p>Number of Ordinances</p>
-          <p>{ ordinances }</p>
+        <div className="Admin__Card" onClick={() => navigate('/records/ordinances/all')}>
+          <div className="Admin__Card__Info">
+            <p>Number of Ordinances</p>
+            <p>{ ordinances.all }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.reports}/></span>
         </div>
-        <div className="Admin__Card">
-          <p>Total Pending Ordinances</p>
-          <p>{ pending }</p>
+        <div className="Admin__Card draft" onClick={() => navigate('/records/ordinances/draft')}>
+          <div className="Admin__Card__Info">
+            <p>Total Draft Ordinances</p>
+            <p>{ ordinances.draft }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.pencil}/></span>
         </div>
-        <div className="Admin__Card">
-          <p>Total Vetoed Ordinances</p>
-          <p>{ vetoed }</p>
+        <div className="Admin__Card pending" onClick={() => navigate('/records/ordinances/pending')}>
+          <div className="Admin__Card__Info">
+            <p>Total Pending Ordinances</p>
+            <p>{ ordinances.pending }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.comments}/></span>
         </div>
-        <div className="Admin__Card">
-          <p>Total Approved Ordinances</p>
-          <p>{ approved }</p>
+        <div className="Admin__Card vetoed" onClick={() => navigate('/records/ordinances/vetoed')}>
+          <div className="Admin__Card__Info">
+            <p>Total Vetoed Ordinances</p>
+            <p>{ ordinances.vetoed }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.eye}/></span>
+        </div>
+        <div className="Admin__Card approved" onClick={() => navigate('/records/ordinances/approved')}>
+          <div className="Admin__Card__Info">
+            <p>Total Approved Ordinances</p>
+            <p>{ ordinances.approved }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.check}/></span>
+        </div>
+        <div className="Admin__Card enacted" onClick={() => navigate('/records/ordinances/enacted')}>
+          <div className="Admin__Card__Info">
+            <p>Total Enacted Ordinances</p>
+            <p>{ ordinances.enacted }</p>
+          </div>
+          <span><FontAwesomeIcon icon={icons.like}/></span>
         </div>
       </div>
     </div>

@@ -4,7 +4,11 @@ const fs = require('fs');
 
 const imageStorage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null, './uploads/images');
+    // Create the dynamic subfolder structure
+    const uploadPath = path.join(__dirname, '..', 'uploads', 'images');
+    // Ensure the directory exists (create it if not)
+    fs.mkdirSync(uploadPath, { recursive: true });
+    cb(null, uploadPath);
   },
   filename(req, file, cb) {
     const ext = path.extname(file.originalname);

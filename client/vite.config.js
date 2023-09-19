@@ -7,4 +7,7 @@ export default defineConfig({
   server: {
     host: '0.0.0.0', // Bind to all available network interfaces
   },
+  define: {
+    'process.env.REACT_APP_API_URL': JSON.stringify(process.env.REACT_APP_API_URL || 'http://localhost:3500'),
+  },
 })

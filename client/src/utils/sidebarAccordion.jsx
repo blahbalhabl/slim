@@ -9,6 +9,14 @@ export const sidebarAccordion = [
       {
         title:  <Link
                   className='Sidebar__Button'
+                  to={'/records/ordinances/all'}>
+                    <FontAwesomeIcon icon={icons.reports} />
+                    <p>List of Ordinances</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
                   to={'/records/ordinances/draft'}>
                     <FontAwesomeIcon icon={icons.pencil} />
                     <p>List of Draft Ordinances</p>
@@ -18,7 +26,7 @@ export const sidebarAccordion = [
         title:  <Link
                   className='Sidebar__Button'
                   to={'/records/ordinances/enacted'}>
-                    <FontAwesomeIcon icon={icons.pencil} />
+                    <FontAwesomeIcon icon={icons.like} />
                     <p>List of Enacted Ordinances</p>
                 </Link>
       },
@@ -26,7 +34,7 @@ export const sidebarAccordion = [
         title:  <Link
                   className='Sidebar__Button'
                   to={'/records/ordinances/enacted/category'}>
-                    <FontAwesomeIcon icon={icons.pencil} />
+                    <FontAwesomeIcon icon={icons.like} />
                     <p>List of Enacted Ordinances by Category</p>
                 </Link>
       },
@@ -34,7 +42,7 @@ export const sidebarAccordion = [
         title:  <Link
                   className='Sidebar__Button'
                   to={'/records/ordinances/approved'}>
-                    <FontAwesomeIcon icon={icons.pencil} />
+                    <FontAwesomeIcon icon={icons.check} />
                     <p>List of Approved Ordinances</p>
                 </Link>
       },
@@ -42,7 +50,7 @@ export const sidebarAccordion = [
         title:  <Link
                   className='Sidebar__Button'
                   to={'/records/ordinances/approved/category'}>
-                    <FontAwesomeIcon icon={icons.pencil} />
+                    <FontAwesomeIcon icon={icons.check} />
                     <p>List of Approved Ordinances by Category</p>
                 </Link>
       },
@@ -58,8 +66,8 @@ export const sidebarAccordion = [
         title:  <Link
                   className='Sidebar__Button'
                   to={'/records/ordinances/vetoed'}>
-                    <FontAwesomeIcon icon={icons.pencil} />
-                    <p>List of Enacted Ordinances</p>
+                    <FontAwesomeIcon icon={icons.eye} />
+                    <p>List of Vetoed Ordinances</p>
                 </Link>
       },
     ]

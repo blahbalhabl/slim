@@ -31,6 +31,10 @@ const brgySchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  size: {
+    type: Number,
+    required: true,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),
@@ -46,4 +50,4 @@ brgySchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Barangay-Ordinances", brgySchema);
+module.exports = mongoose.model("Ordinances-Barangay", brgySchema);
