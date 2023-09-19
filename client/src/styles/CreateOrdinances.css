@@ -56,3 +56,21 @@
   border-radius: 10px;
   cursor: pointer;
 }
+
+.CreateOrdinances__Alert {
+  padding: 10px;
+  text-align: center;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid green;
+  background-color: lightgreen;
+}
+
+.CreateOrdiannces__Alert.success {
+  padding: 10px;
+  text-align: center;
+  margin-top: 10px;
+  border-radius: 10px;
+  border: 1px solid green;
+  background-color: lightgreen;
+}

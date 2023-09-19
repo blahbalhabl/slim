@@ -5,14 +5,18 @@ import { icons } from '../utils/Icons'
 import { BASE_URL } from '../api/axios'
 import Modal from '../components/Modal';
 import Loader from "../components/Loader";
+import useAuth from "../hooks/useAuth";
 
 import '../styles/Profile.css'
 
 const UserProfile = () => {
   const axiosPrivate = useAxiosPrivate();
+  const { auth } = useAuth()
   const [user, setUser] = useState();
   const [avatar, setAvatar] = useState();
+  const [isChecked, setIsChecked] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
+  const [imageSrc, setImageSrc] = useState(null);
   const [inputs, setInputs] = useState({
     oldpass: "",
     newpass: "",
@@ -30,6 +34,7 @@ const UserProfile = () => {
     try {
       const res = await axiosPrivate.get('/user');
       const data = res.data
+      setIsChecked(data.is2faOn)
       return data;
     } catch (err) {
       console.log(err);
@@ -44,6 +49,25 @@ const UserProfile = () => {
     });
   };
 
+  const handleCheckboxChange = async () => {
+    try {
+      const is2faOn = !isChecked;
+
+      // Send an API request to update the user's data
+      const res = await axiosPrivate.put('/update-2fa', { is2faOn }, {
+        headers: {'Content-Type': 'application/json'}
+      });
+      if (res.status === 200) {
+        console.log('User data updated successfully.');
+        setIsChecked(is2faOn); // Update the state locally
+      } else {
+        console.error('Failed to update user data.');
+      }
+    } catch (error) {
+      console.error('Error updating user data:', error);
+    }
+  };
+
   const handleAvatarChange = (e) => {
     const photo = e.target.files[0];
     setAvatar(photo);
@@ -54,14 +78,6 @@ const UserProfile = () => {
     formData.append('avatar', avatar);
     uploadAvatar();
   };
-
-  const openAvatar = () => {
-    return (
-      <>
-      
-      </>
-    )
-  }
 
   const uploadAvatar = async () => {
     try {
@@ -114,6 +130,29 @@ const UserProfile = () => {
       setUser(data);
     })
   },[])
+
+  useEffect(() => {
+    if (auth) {
+      // Fetch the image using Axios when auth data is available
+      axiosPrivate
+        .get(`/uploads/images/${auth.avatar}`, {
+          responseType: 'arraybuffer', // Specify the response type as arraybuffer
+        })
+        .then((response) => {
+          const base64Image = btoa(
+            new Uint8Array(response.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          );
+          const dataURL = `data:${response.headers['content-type']};base64,${base64Image}`;
+          setImageSrc(dataURL);
+        })
+        .catch((error) => {
+          console.error('Error fetching image:', error);
+        });
+    }
+  }, [auth]);
   
   return (
     <div className="Profile">
@@ -124,8 +163,12 @@ const UserProfile = () => {
             onMouseLeave={handleAvatarLeave}>
             {user.avatar ? (
               <>
-                <img src={`${BASE_URL}/uploads/images/${user.avatar}`} />
-                {isButtonVisible && 
+                <img src={imageSrc} />
+              </>
+            ) : (
+              <FontAwesomeIcon icon={icons.user} />
+            )}
+            {isButtonVisible && 
                 <div className="Profile__Avatar__Change">
                   <label htmlFor="avatar-input">Upload Avatar</label>
                   <input 
@@ -139,10 +182,6 @@ const UserProfile = () => {
                   <button onClick={handleUpload}>Upload</button>
                 </div>
                 }
-              </>
-            ) : (
-              <FontAwesomeIcon icon={icons.user} />
-            )}
           </div>
           <div className="Profile__Information">
             <h2>{user.name}</h2>
@@ -152,6 +191,14 @@ const UserProfile = () => {
         <div className="Profile__Card__Right">
               <h2>Security</h2>
               <button onClick={openModal}>Change Password</button>
+              <label htmlFor="otp-on">Use Google Authenticator
+              <input
+                type='checkbox'
+                checked={isChecked}
+                id="otp-on"
+                onChange={handleCheckboxChange}
+              />
+              </label>
         </div>
         <Modal 
           isOpen={isModalOpen}

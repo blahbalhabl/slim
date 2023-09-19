@@ -44,7 +44,9 @@ const Accordion = ({ data, collapse }) => {
           >
             {item.contents.map((content, j) => (
               <div key={j}>
+                { !collapse && (
                 <div>{content.title}</div>
+                )}
               </div>
             ))}
           </div>

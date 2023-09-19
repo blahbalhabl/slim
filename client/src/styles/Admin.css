@@ -23,6 +23,10 @@
   cursor: pointer;
 }
 
+.Admin__Card__Info > p:nth-child(2) {
+  font-weight: bold;
+}
+
 .Admin__Card.users > span {
   color: green;
   background-color: lightgreen;

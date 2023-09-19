@@ -5,24 +5,22 @@ import useLogout from "../hooks/useLogout";
 import Tooltip from "./Tooltip";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../utils/Icons'
-import { BASE_URL } from '../api/axios'
+import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import "../styles/Header.css";
 
 const Header = () => {
+  const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const logout = useLogout();
   const { auth } = useAuth();
   const [ logo, setLogo ] = useState();
+  const [imageSrc, setImageSrc] = useState(null);
+
   const signOut = async () => {
     await logout();
     navigate('/login');
   }
 
-  const sendRequest = async () => {
-    const siteLogo = `${BASE_URL}/uploads/images/site-logo.png`;
-    setLogo(siteLogo);
-  };
- 
   const headerTooltip = [
     {
       buttons: [
@@ -47,8 +45,43 @@ const Header = () => {
   ]
 
   useEffect(() => {
-    sendRequest()
-  }, [])
+    if (auth) {
+      axiosPrivate
+        .get(`/uploads/images/${auth.avatar}`, {
+          responseType: 'arraybuffer',
+        })
+        .then((response) => {
+          const base64Image = btoa(
+            new Uint8Array(response.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          );
+          const dataURL = `data:${response.headers['content-type']};base64,${base64Image}`;
+          setImageSrc(dataURL);
+        })
+        .catch((error) => {
+          console.error('Error fetching image:', error);
+        });
+
+      axiosPrivate.get(`uploads/images/site-logo.png`, {
+          responseType: 'arraybuffer',
+        })
+        .then((response) => {
+          const base64Image = btoa(
+            new Uint8Array(response.data).reduce(
+              (data, byte) => data + String.fromCharCode(byte),
+              ''
+            )
+          );
+          const dataURL = `data:${response.headers['content-type']};base64,${base64Image}`;
+          setLogo(dataURL);
+        })
+        .catch((error) => {
+          console.error('Error fetching image:', error);
+        });
+    }
+  }, [auth]);
 
   return (
     <div className="Header">
@@ -59,8 +92,8 @@ const Header = () => {
       <div className="Header__Container">
         {auth && (
           <div className="Header__Info">
-            {auth && auth?.avatar ? (
-              <img className="Header__Avatar" src={`${BASE_URL}/uploads/images/${auth.avatar}`}  />
+            {imageSrc ? (
+              <img className="Header__Avatar" src={imageSrc}  />
             ) : (<FontAwesomeIcon icon={icons.user} />)}
             <p>
               {auth.name.toUpperCase()}

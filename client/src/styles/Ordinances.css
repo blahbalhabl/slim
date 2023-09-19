@@ -74,6 +74,8 @@ td, th {
 }
 
 .Ordinances__Legend {
+  display: flex;
+  align-items: center;
   background-color: white;
   border-radius: 15px;
   margin: 10px 0px 10px 0px;
@@ -83,6 +85,7 @@ td, th {
 
 .Ordinances__Legend > div {
   display: flex;
+  margin-left: 20px;
 }
 
 .Ordinances__Legend > div > div {
@@ -90,4 +93,21 @@ td, th {
   height: 15px;
   width: 15px;
   border-radius: 5px;
+}
+
+.Ordinances__Details {
+  height: 80vh;
+  width: 90vw;
+}
+
+.Ordinances__Details__Title {
+  margin-top: 20px;
+  display: flex;
+}
+
+.Ordinances__Details__Title__Input {
+  font-size: 1rem;
+  /* border: 1px solid green; */
+  border: none;
+  background-color: gainsboro;
 }

@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 
 import '../styles/Signup.css'
 
 const Signup = () => {
   const axiosPrivate = useAxiosPrivate();
-  const [password, setPassword] = useState();
+  const [otpAuthUrl, setOtpAuthUrl] = useState();
   const [inputs, setInputs] = useState({
     email: "",
     username: "",
@@ -24,7 +24,7 @@ const Signup = () => {
     e.preventDefault();
     // Send Request to Server API
     userSignup();
-  };
+  }
 
   const userSignup = async () => {
     try {
@@ -41,36 +41,33 @@ const Signup = () => {
 
       if (res.status === 200) {
         const defaultPassword = res.data.defaultPassword;
-        setPassword(defaultPassword);
+        setOtpAuthUrl(res.data.qrCode);
+
+        const emailData = {
+          email: inputs.email,
+          subject: `SLIM Account Creation`,
+          html: `
+            <h1>Welcome to SLIM.</h1> 
+            <h3>Here are your account details:</h3>
+            </br>
+            </br>
+            <p>email: ${inputs.email}</p>
+            <p>password: ${defaultPassword}</p>
+            <p>Enter this code to Google Authenticator:</p>
+            <p>${res.data.secret}</p>
+            <p>Make sure once logged in to change password right away.</p>`,
+        };
+
+        await axiosPrivate.post('/send-email', emailData, {
+          headers: {'Content-Type': 'application/json'}
+        }).catch((err) => {
+          console.log('Error sending email:', err);
+        });
       }
     } catch (err) {
       console.log('Error:', err);
     }
   };
-
-  // Use useEffect to send the email after the password state has been updated
-  useEffect(() => {
-    if (password) {
-      const emailData = {
-        email: inputs.email,
-        subject: `SLIM Account Creation`,
-        text: `
-          <h1>Welcome to SLIM.</h1> 
-          <h3>Here are your account details:</h3>
-          </br>
-          </br>
-          <p>email: ${inputs.email}</p>
-          <p>password: ${password}</p>
-          <p>Make sure once logged in to change password right away.</p>`,
-      };
-      
-      axiosPrivate.post('/send-email', emailData, {
-        headers: {'Content-Type': 'application/json'}
-      }).catch((err) => {
-        console.log('Error sending email:', err);
-      });
-    }
-  }, [password, inputs.email, axiosPrivate]);
 
   return (
     <div className="Signup">
@@ -115,6 +112,13 @@ const Signup = () => {
             </button>
         </div>
       </form>
+      {otpAuthUrl && (
+        <div className="QRCodeContainer">
+          <h3>Scan this QR code with your authenticator app</h3>
+          <img src={otpAuthUrl} alt="QR Code for 2FA" />
+          <p>Make sure once logged in to change password right away.</p>
+        </div>
+      )}
     </div>
   );
 };

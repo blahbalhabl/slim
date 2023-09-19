@@ -21,7 +21,9 @@ import { faPencil,
   faXmark,
   faComment,
   faCheck,
-  faThumbsUp, } from '@fortawesome/free-solid-svg-icons';
+  faThumbsUp,
+  faCaretRight,
+  faHouse, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   reports: faScroll,
@@ -39,6 +41,7 @@ export const icons = {
   logout: faArrowRightFromBracket,
   v: faCaretDown,
   left: faCaretLeft,
+  right: faCaretRight,
   down: faSortDown,
   sad: faFaceSadTear,
   burger: faBars,
@@ -47,5 +50,6 @@ export const icons = {
   close: faXmark,
   comments: faComment,
   check: faCheck,
-  like: faThumbsUp
+  like: faThumbsUp,
+  house: faHouse,
 };

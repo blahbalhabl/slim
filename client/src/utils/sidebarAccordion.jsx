@@ -9,6 +9,14 @@ export const sidebarAccordion = [
       {
         title:  <Link
                   className='Sidebar__Button'
+                  to={'/records/ordinances/all'}>
+                    <FontAwesomeIcon icon={icons.reports} />
+                    <p>List of Ordinances</p>
+                </Link>
+      },
+      {
+        title:  <Link
+                  className='Sidebar__Button'
                   to={'/records/ordinances/draft'}>
                     <FontAwesomeIcon icon={icons.pencil} />
                     <p>List of Draft Ordinances</p>

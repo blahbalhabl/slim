@@ -1,17 +1,18 @@
 import Modal from './Modal';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import useAuth from '../hooks/useAuth';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import {roles} from '../utils/userRoles';
 import '../styles/CreateOrdinances.css'
 
-const CreateOrdinances = () => {
+const CreateOrdinances = ({sendRequest}) => {
   const role = roles.role;
   const level = roles.level;
   const { auth } = useAuth();
   const axiosPrivate = useAxiosPrivate();
   const [message, setMessage] = useState();
   const [uploading, setUploading] = useState(false);
+  const [showAlert, setShowAlert] = useState(false);
   const [inputs, setInputs] = useState({
     number: "",
     series: "",
@@ -64,6 +65,20 @@ const CreateOrdinances = () => {
       console.log(err);
     }
   };
+
+  useEffect(() => {
+    if (message) {
+      setShowAlert(true);
+
+      // Hide the alert after 3 seconds (adjust the time as needed)
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+
+      // Clear the timer when the component unmounts
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
 
   return (
     <div className="CreateOrdinances">
@@ -124,7 +139,7 @@ const CreateOrdinances = () => {
               </div>
               <button className='CreateOrdinances__Button' type='submit'>Submit</button>
             </form>
-            {message && <div className="alert">{message}</div>}
+            {showAlert && <div className="CreateOrdinances__Alert">{message}</div>}
         </div>
       </Modal>
     </div>

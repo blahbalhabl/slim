@@ -10,7 +10,7 @@ const oAuth2Client = new google.auth.OAuth2(
 oAuth2Client.setCredentials({ refresh_token: process.env.REFRESH_TOKEN});
 
 const sendEmail = async (req, res) => {
-  const {email, subject, text} = req.body;
+  const {email, subject, html} = req.body;
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -30,8 +30,7 @@ const sendEmail = async (req, res) => {
       from: `ACCOUNT CREATION <${process.env.G_MAIL}>`,
       to: email,
       subject: subject,
-      text: text,
-      html: text
+      html: html,
     }
 
     const result = await transport.sendMail(mailOptions)
@@ -42,9 +41,8 @@ const sendEmail = async (req, res) => {
 }
 
 const forgotEmail = async (req, res) => {
-  const {email, subject, text} = req.body;
-
   try {
+    const {email, subject, html} = req.body;
     const accessToken = await oAuth2Client.getAccessToken();
 
     const transport = nodemailer.createTransport({
@@ -63,8 +61,7 @@ const forgotEmail = async (req, res) => {
       from: `FORGOT PASSWORD? <${process.env.G_MAIL}>`,
       to: email,
       subject: subject,
-      text: text,
-      html: text
+      html: html,
     }
 
     const result = await transport.sendMail(mailOptions)

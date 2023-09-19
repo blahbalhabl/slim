@@ -18,6 +18,8 @@ const Ordinances = () => {
   const axiosPrivate = useAxiosPrivate();
   const [loading, setLoading] = useState(true);
   const [ordinances, setOrdinances] = useState();
+  const [isEditing, setIsEditing] = useState(true);
+  const [pdfUrl, setPdfUrl] = useState('');
   const [selectedOrdinance, setSelectedOrdinance] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -33,7 +35,6 @@ const Ordinances = () => {
     try {
       const res = await axiosPrivate.get(`/ordinances?type=ordinances&level=${auth.level}&status=${status}`);
       const ordinances = res.data;
-      // const drafts = ordinances.filter((ordinance) => ordinance.status === 'draft');
       return {
         ordinances: ordinances,
       }
@@ -46,20 +47,17 @@ const Ordinances = () => {
     try {
       const response = await axiosPrivate.get(`/download/${filename}?type=ordinances&level=${auth.level}&series=${series}`, {
         responseType: 'blob', // Set the response type to 'blob' to handle binary data
+        headers: { Authorization: `Bearer ${auth.token}` }
       });
-  
       // Create a blob object from the binary data
       const blob = new Blob([response.data]);
-  
       // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-  
       // Create a link element to trigger the download
       const fileLink = document.createElement('a');
       fileLink.href = url;
       fileLink.download = filename;
       fileLink.click();
-  
       // Clean up the URL created for the blob
       window.URL.revokeObjectURL(url);
     } catch (err) {
@@ -67,9 +65,24 @@ const Ordinances = () => {
     }
   };
 
-  const handleOrdinanceClick = (ordinance) => {
+  const handleOrdinanceClick = async (ordinance) => {
     setSelectedOrdinance(ordinance);
-    openModal(); 
+  
+    try {
+      const response = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
+        responseType: 'blob',
+      });
+      // Create a blob object from the binary data
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+      // Set the PDF URL for the iframe
+      setPdfUrl(url);
+      
+      openModal();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -80,7 +93,6 @@ const Ordinances = () => {
     }) => {
       if ( isMounted ) {
         setOrdinances(ordinances);
-        console.log(ordinances)
       }
       setLoading(false);
     })
@@ -91,7 +103,7 @@ const Ordinances = () => {
     return () => {
       isMounted = false;
     }
-  },[auth.level, status]);
+  },[auth.level, status, isModalOpen]);
 
   if (loading) {
     return <Loader />;
@@ -101,12 +113,12 @@ const Ordinances = () => {
     <div className="Ordinances">
       <BreadCrumbs items={breadcrumbs} />
       <div className="Ordinances__Card">
-        <CreateOrdinances />
+        <CreateOrdinances sendRequest={sendRequest()}/>
       </div>
       <div className="Ordinances__Container">
       <h3 className='Ordinances__Top__Title'>{status.toUpperCase()} ORDINANCES</h3>
       <div className="Ordinances__Legend">
-        Legend:
+        <h4>Legend:</h4>
         <div>
           <div style={{backgroundColor: 'orange'}}></div>
           <p>Draft</p>
@@ -136,7 +148,7 @@ const Ordinances = () => {
           </thead>
           { ordinances.length > 0 ? (
               ordinances.map((ordinance, i) => (
-                (ordinance.status === status && ordinance.accessLevel === auth.level) ? (
+                (ordinance.status === status || status === 'all' && ordinance.accessLevel === auth.level) ? (
                   <tbody key={i} >
                   <tr
                     className='Ordinances__Link'
@@ -189,18 +201,71 @@ const Ordinances = () => {
       {selectedOrdinance && (
         <Modal isOpen={isModalOpen} closeModal={closeModal}>
           <div className="Ordinances__Details">
-            <div className="Ordinances__Details__Title">
-              <h3>{`ORDINANCE NO ${selectedOrdinance.number}, Series of ${selectedOrdinance.series}`}</h3>
-              <p>{selectedOrdinance.title}</p>
-            </div>
-            <div className="Ordinances__Details__Content">
-              
-            </div>
+            <form>
+              <h2>ORDINANCE DETAILS</h2>
+              <div className="Ordinances__Details__Title">
+                <p>ORDINANCE NO </p>
+                <input
+                  className='Ordinances__Details__Title__Input'
+                  type="number" 
+                  name="number" 
+                  id="number"
+                  style={{width: '50px'}}
+                  value={selectedOrdinance.number}
+                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, number: e.target.value})} 
+                  readOnly={isEditing}
+                />
+                  <p>, Series of</p>
+                <input
+                  className='Ordinances__Details__Title__Input'
+                  type="number" 
+                  name="series" 
+                  id="series"
+                  style={{width: '50px'}}
+                  value={selectedOrdinance.series}
+                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, series: e.target.value})}
+                  readOnly={isEditing}
+                />
+                <input
+                  className='Ordinances__Details__Title__Input'
+                  type="text"
+                  name='title'
+                  id='title'
+                  value={selectedOrdinance.title}
+                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, title: e.target.value})}
+                  readOnly={isEditing}
+                />
+                <input
+                  className='Ordinances__Details__Title__Input'
+                  type="text"
+                  name='status'
+                  id='status'
+                  value={selectedOrdinance.status}
+                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
+                  readOnly={isEditing}
+                />
+              </div>
+              <div className="Ordinances__Details__Content">
+                <button onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
+                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true)}}>Cancel</button> ) : null}
+                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true); updateRequest}}>Update</button> ) : null}
+                <button>Delete</button>
+                <div className="Ordinances__PDFViewer">
+                  <iframe
+                    title="PDF Viewer"
+                    src={pdfUrl} // Set the PDF file URL as the iframe source
+                    width="100%"
+                    height="500px"
+                  ></iframe>
+              </div>
+              </div>
+            </form>
+            
           </div>
         </Modal>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default Ordinances
+export default Ordinances;

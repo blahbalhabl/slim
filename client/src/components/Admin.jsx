@@ -74,7 +74,7 @@ const Users = () => {
           </div>
           <span><FontAwesomeIcon icon={icons.user}/></span>
         </div>
-        <div className="Admin__Card" onClick={() => navigate('/records/ordinances/draft')}>
+        <div className="Admin__Card" onClick={() => navigate('/records/ordinances/all')}>
           <div className="Admin__Card__Info">
             <p>Number of Ordinances</p>
             <p>{ ordinances.all }</p>
