@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Minutes = require('./minutesModel');
 
 const ordinanceSchema = new mongoose.Schema({
   number: {
@@ -34,6 +35,10 @@ const ordinanceSchema = new mongoose.Schema({
   size: {
     type: Number,
     required: true,
+  },
+  minutesOfMeeting: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MinutesOfMeeting",
   },
   createdAt: {
     type: Date,

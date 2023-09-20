@@ -1,6 +1,7 @@
 const fs = require('fs');
 const Ordinance = require('../models/ordinancesModel');
 const Barangay = require('../models/brgyOrdMOdel');
+const Minutes = require('../models/minutesModel')
 
 const draftOrdinance = async (req, res) => {
   try {
@@ -117,7 +118,6 @@ const delOrdinance = async (req, res) => {
 
 // Delete just the file when user is updating the file
 const updateOrdinance = async (req, res) => {
-
   try {
     const updateData = req.body;
     const { level, series, type } = req.query;

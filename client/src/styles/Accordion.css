@@ -31,22 +31,23 @@
 }
 
 .Accordion__Content {
+    padding-left: 10px;
     max-height: 0;
-    background-color: darkslategray;
+    font-size: .95rem;
     overflow: hidden;
-    width: 100%;
+    width: auto;
     transition: max-height 0.3s ease-in-out;
 }
 
 .Accordion__Content.active  {
+    padding-left: 10px;
     max-height: 400px;
-    background-color: darkslategray;
+    font-size: .95rem;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    width: 100%;
-    /* overflow-y: scroll; */
+    width: auto;
 }
 
 .Accordion__Content.active > div {

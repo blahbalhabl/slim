@@ -8,7 +8,8 @@ const bodyParser = require('body-parser');
 const user = require("./routes/userRoutes");
 const ordinance = require('./routes/uploadRoutes');
 const email = require('./routes/emailRoutes');
-const protectedFileRoute = require('./routes/uploadRoutes');
+const uploads = require('./routes/uploadRoutes');
+const minutes = require('./routes/minutesRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3500;
@@ -26,7 +27,7 @@ const conn = mongoose
   .catch((err) => console.log(err));
 
 //API Route
-app.use("/api", user, ordinance, email, protectedFileRoute);
+app.use("/api", user, ordinance, email, uploads, minutes);
 app.listen(PORT, HOST, () => console.log(`Server running on http://${HOST}:${PORT}`));
 
 module.exports = conn;

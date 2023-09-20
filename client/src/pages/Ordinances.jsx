@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { icons } from '../utils/Icons'
 import '../styles/Ordinances.css'
 
-
 const Ordinances = () => {
   const { auth } = useAuth();
   const { status } = useParams();
@@ -19,9 +18,15 @@ const Ordinances = () => {
   const [loading, setLoading] = useState(true);
   const [ordinances, setOrdinances] = useState();
   const [isEditing, setIsEditing] = useState(true);
+  const [dropDown, setDropdown] = useState(false);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [minutesUrl, setMinutesUrl] = useState('');
+  const [minutes, setMinutes] = useState();
   const [collapsed, setCollapsed] = useState(true);
   const [selectedOrdinance, setSelectedOrdinance] = useState(null);
+  const [additionalProperties, setAdditionalProperties] = useState({});
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
@@ -31,10 +36,6 @@ const Ordinances = () => {
     label: name,
     url: `/${pathnames.slice(0, index + 1).join('/')}`,
   }));
-
-  const togglePdfViewer = () => {
-    setCollapsed(!collapsed);
-  };
 
   const sendRequest = async () => {
     try {
@@ -72,9 +73,14 @@ const Ordinances = () => {
 
   const handleOrdinanceClick = async (ordinance) => {
     setSelectedOrdinance(ordinance);
-  
     try {
+      const minutes = await axiosPrivate.get(`/minutes/${ordinance._id}`);
+      setMinutes(minutes.data);
+
       const response = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
+        responseType: 'blob',
+      });
+      const minResponse = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
         responseType: 'blob',
       });
       // Create a blob object from the binary data
@@ -83,12 +89,43 @@ const Ordinances = () => {
       const url = window.URL.createObjectURL(blob);
       // Set the PDF URL for the iframe
       setPdfUrl(url);
+
+      // Get Minutes of the meeting related to the clicked ordinance
       
       openModal();
     } catch (error) {
       console.error(error);
     }
   };
+
+  const addAdditionalProperty = () => {
+    return (
+    <div>
+      <input
+        type="text"
+        placeholder="Property Name"
+        value={additionalProperties.propertyName || ''}
+        onChange={(e) =>
+          setAdditionalProperties({
+            ...additionalProperties,
+             propertyName: e.target.value,
+          })
+        }
+      />
+      <input
+        type="text"
+        placeholder="Property Value"
+        value={additionalProperties.propertyValue || ''}
+        onChange={(e) =>
+          setAdditionalProperties({
+            ...additionalProperties,
+              propertyValue: e.target.value,
+            })
+           }
+      />
+    </div>
+    )
+  }
 
   useEffect(() => {
     let isMounted = true;
@@ -108,7 +145,16 @@ const Ordinances = () => {
     return () => {
       isMounted = false;
     }
-  },[auth.level, status, isModalOpen]);
+  },[]);
+
+  useEffect(() => {
+    if (minutes && minutes.length > 0) {
+      const sortedMinutes = [...minutes].sort((a, b) =>
+        new Date(b.date) - new Date(a.date)
+      );
+      setSelectedItem(sortedMinutes[0]);
+    }
+  }, [minutes]);
 
   if (loading) {
     return <Loader />;
@@ -146,6 +192,7 @@ const Ordinances = () => {
             <tr className="Ordinances__Header">
               <th>Type</th>
               <th>Title</th>
+              <th>Status</th>
               <th>Date</th>
               <th>Size</th>
               <th></th>
@@ -178,6 +225,9 @@ const Ordinances = () => {
                     >
                         <p>ORDINANCE NO {ordinance.number}, Series of {ordinance.series} {ordinance.title.toUpperCase()}</p>
                     </td>
+                    <td>
+                      <p>{ordinance.status.toUpperCase()}</p>
+                    </td>
                     <td 
                       className='Ordinances__Date'>
                         {new Date(ordinance.createdAt).toLocaleString()}
@@ -209,7 +259,7 @@ const Ordinances = () => {
           <h2>ORDINANCE DETAILS</h2>
             <form className='Ordinances__Details__Form'>
               <div className="Ordinances__Details__Title">
-                <p>ORDINANCE NO </p> {console.log(isEditing)}
+                <p>ORDINANCE NO </p>
                 <input
                   className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
                   type="number"
@@ -240,6 +290,7 @@ const Ordinances = () => {
                   onChange={(e) => setSelectedOrdinance({...selectedOrdinance, title: e.target.value})}
                   readOnly={isEditing}
                 />
+                <label htmlFor="status">Status:</label>
                 <input
                   className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
                   type="text"
@@ -258,11 +309,11 @@ const Ordinances = () => {
               </div>
             </form>
             <div className="Ordinances__PDFViewer">
-              <div className="Ordinances__PDFViewer__Container">
+              <div className="Ordinances__Card__Container">
                 <div
                   className='Ordinances__PDFViewer__Button'
-                  onClick={togglePdfViewer}>
-                  <p>View PDF File</p>
+                  onClick={() => setCollapsed(!collapsed)}>
+                  <p>View Ordinance File</p>
                   {collapsed ? (<FontAwesomeIcon icon={icons.v}/>) : (<FontAwesomeIcon icon={icons.left}/>)}
                 </div>
                 <iframe
@@ -271,6 +322,25 @@ const Ordinances = () => {
                   src={pdfUrl} // Set the PDF file URL as the iframe source
                 />
               </div>
+            </div>
+            <div className="Ordinances__Minutes__Container">
+              <h3>Minutes of the Meeting for {selectedOrdinance.title.toUpperCase()}</h3>
+              <button onClick={() => setDropdown(!dropDown)}>Select Meeting Date:</button>
+              {dropDown && (
+                <ul>
+                  {minutes.map((item, i) => (
+                    <li key={i} onClick={() => setSelectedItem(item)}>{new Date(item.date).toLocaleString(undefined, {hour12: true})}</li>
+                  ))}
+                </ul>
+              )}
+              {selectedItem && (
+                <div>
+                  <p>Date: {new Date(selectedItem.date).toLocaleString(undefined, {hour12: true})}</p>
+                  <p>Agenda: {selectedItem.agenda}</p>
+                  <p>Description: {selectedItem.description}</p>
+                  <p>Speaker: {selectedItem.speaker}</p>
+                </div>
+              )}
             </div>
           </div>
         </Modal>
