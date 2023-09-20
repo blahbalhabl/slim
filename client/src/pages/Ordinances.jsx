@@ -20,6 +20,7 @@ const Ordinances = () => {
   const [ordinances, setOrdinances] = useState();
   const [isEditing, setIsEditing] = useState(true);
   const [pdfUrl, setPdfUrl] = useState('');
+  const [collapsed, setCollapsed] = useState(true);
   const [selectedOrdinance, setSelectedOrdinance] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
@@ -30,6 +31,10 @@ const Ordinances = () => {
     label: name,
     url: `/${pathnames.slice(0, index + 1).join('/')}`,
   }));
+
+  const togglePdfViewer = () => {
+    setCollapsed(!collapsed);
+  };
 
   const sendRequest = async () => {
     try {
@@ -201,14 +206,14 @@ const Ordinances = () => {
       {selectedOrdinance && (
         <Modal isOpen={isModalOpen} closeModal={closeModal}>
           <div className="Ordinances__Details">
-            <form>
-              <h2>ORDINANCE DETAILS</h2>
+          <h2>ORDINANCE DETAILS</h2>
+            <form className='Ordinances__Details__Form'>
               <div className="Ordinances__Details__Title">
-                <p>ORDINANCE NO </p>
+                <p>ORDINANCE NO </p> {console.log(isEditing)}
                 <input
-                  className='Ordinances__Details__Title__Input'
-                  type="number" 
-                  name="number" 
+                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                  type="number"
+                  name="number"
                   id="number"
                   style={{width: '50px'}}
                   value={selectedOrdinance.number}
@@ -217,9 +222,9 @@ const Ordinances = () => {
                 />
                   <p>, Series of</p>
                 <input
-                  className='Ordinances__Details__Title__Input'
-                  type="number" 
-                  name="series" 
+                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                  type="number"
+                  name="series"
                   id="series"
                   style={{width: '50px'}}
                   value={selectedOrdinance.series}
@@ -227,7 +232,7 @@ const Ordinances = () => {
                   readOnly={isEditing}
                 />
                 <input
-                  className='Ordinances__Details__Title__Input'
+                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
                   type="text"
                   name='title'
                   id='title'
@@ -236,7 +241,7 @@ const Ordinances = () => {
                   readOnly={isEditing}
                 />
                 <input
-                  className='Ordinances__Details__Title__Input'
+                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
                   type="text"
                   name='status'
                   id='status'
@@ -250,17 +255,23 @@ const Ordinances = () => {
                 {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true)}}>Cancel</button> ) : null}
                 {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true); updateRequest}}>Update</button> ) : null}
                 <button>Delete</button>
-                <div className="Ordinances__PDFViewer">
-                  <iframe
-                    title="PDF Viewer"
-                    src={pdfUrl} // Set the PDF file URL as the iframe source
-                    width="100%"
-                    height="500px"
-                  ></iframe>
-              </div>
               </div>
             </form>
-            
+            <div className="Ordinances__PDFViewer">
+              <div className="Ordinances__PDFViewer__Container">
+                <div
+                  className='Ordinances__PDFViewer__Button'
+                  onClick={togglePdfViewer}>
+                  <p>View PDF File</p>
+                  {collapsed ? (<FontAwesomeIcon icon={icons.v}/>) : (<FontAwesomeIcon icon={icons.left}/>)}
+                </div>
+                <iframe
+                  className={`Ordinances__PDFViewer__Frame ${collapsed ? 'collapsed' : ''}`}
+                  title="PDF Viewer"
+                  src={pdfUrl} // Set the PDF file URL as the iframe source
+                />
+              </div>
+            </div>
           </div>
         </Modal>
       )}
