@@ -15,6 +15,7 @@ const Ordinances = () => {
   const { status } = useParams();
   const location = useLocation();
   const axiosPrivate = useAxiosPrivate();
+  const [message, setMessage] = useState();
   const [loading, setLoading] = useState(true);
   const [ordinances, setOrdinances] = useState();
   const [isEditing, setIsEditing] = useState(true);
@@ -23,19 +24,45 @@ const Ordinances = () => {
   const [selectedItem, setSelectedItem] = useState(null);
   const [minutesUrl, setMinutesUrl] = useState('');
   const [minutes, setMinutes] = useState();
+  const [file, setFile] = useState();
+  const [addMinutes, setAddMinutes] = useState();
   const [collapsed, setCollapsed] = useState(true);
+  const [minCollapsed, setMinCollapsed] = useState(true);
   const [selectedOrdinance, setSelectedOrdinance] = useState(null);
-  const [additionalProperties, setAdditionalProperties] = useState({});
+  const [showAlert, setShowAlert] = useState(false);
+  const [inputs, setInputs] = useState({
+    date: "",
+    agenda: "",
+    description: "",
+    speaker: "",
+  });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+  const [delModalOpen, setDelModalOpen] = useState(false);
+  const openDelModal = () => setDelModalOpen(true);
+  const closeDelModal = () => setDelModalOpen(false);
   const pathnames = location.pathname.split('/').filter((item) => item !== '');
 
   const breadcrumbs = pathnames.map((name, index) => ({
     label: name,
     url: `/${pathnames.slice(0, index + 1).join('/')}`,
   }));
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setInputs((prev) => {
+      return { ...prev, [name]: value };
+    });
+  };
+
+  const handleFileChange = (e) => {
+    e.preventDefault();
+    console.log(e.target.files[0]);
+    const file = e.target.files[0];
+    setFile(file);
+  };
 
   const sendRequest = async () => {
     try {
@@ -53,7 +80,6 @@ const Ordinances = () => {
     try {
       const response = await axiosPrivate.get(`/download/${filename}?type=ordinances&level=${auth.level}&series=${series}`, {
         responseType: 'blob', // Set the response type to 'blob' to handle binary data
-        headers: { Authorization: `Bearer ${auth.token}` }
       });
       // Create a blob object from the binary data
       const blob = new Blob([response.data]);
@@ -70,65 +96,109 @@ const Ordinances = () => {
       console.log(err);
     }
   };
-
+ 
   const handleOrdinanceClick = async (ordinance) => {
-    setSelectedOrdinance(ordinance);
     try {
+      setSelectedOrdinance(ordinance);
       const minutes = await axiosPrivate.get(`/minutes/${ordinance._id}`);
       setMinutes(minutes.data);
 
       const response = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
         responseType: 'blob',
       });
-      const minResponse = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
-        responseType: 'blob',
-      });
-      // Create a blob object from the binary data
       const blob = new Blob([response.data], { type: 'application/pdf' });
-      // Create a URL for the blob
       const url = window.URL.createObjectURL(blob);
-      // Set the PDF URL for the iframe
       setPdfUrl(url);
-
       // Get Minutes of the meeting related to the clicked ordinance
-      
       openModal();
     } catch (error) {
       console.error(error);
     }
   };
 
-  const addAdditionalProperty = () => {
-    return (
-    <div>
-      <input
-        type="text"
-        placeholder="Property Name"
-        value={additionalProperties.propertyName || ''}
-        onChange={(e) =>
-          setAdditionalProperties({
-            ...additionalProperties,
-             propertyName: e.target.value,
-          })
+  const handleSelectMinutes = async (minute) => {
+    try {
+      setSelectedItem(minute)
+      const minResponse = await axiosPrivate.get(`/download/${minute.file}?type=minutes&level=${auth.level}&series=${selectedOrdinance.series}`, {
+        responseType: 'blob',
+      });
+      const blobMin = new Blob([minResponse.data], { type: 'application/pdf' });
+      const urlMin = window.URL.createObjectURL(blobMin);
+      setMinutesUrl(urlMin);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUploadMinutes = async (e, id, series) => {
+    e.preventDefault();
+    try {
+      const minuteData = new FormData();
+        minuteData.append('date', inputs.date);
+        minuteData.append('agenda', inputs.agenda);
+        minuteData.append('description', inputs.description);
+        minuteData.append('speaker', inputs.speaker);
+        minuteData.append('series', series);
+        minuteData.append('type', 'minutes');
+        minuteData.append('level', auth.level);
+        minuteData.append('file', file);
+        const res = await axiosPrivate.post(`/upload-minutes?type=minutes&ordinanceId=${id}`, minuteData, {
+          headers: {'Content-Type': 'multipart/form-data'}
+        })
+  
+        if (res.status === 200 || 401) {
+          setMessage(res.data.message);
+        } else {
+          setMessage('Error on Uploading Ordinance')
         }
-      />
-      <input
-        type="text"
-        placeholder="Property Value"
-        value={additionalProperties.propertyValue || ''}
-        onChange={(e) =>
-          setAdditionalProperties({
-            ...additionalProperties,
-              propertyValue: e.target.value,
-            })
-           }
-      />
-    </div>
-    )
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleUpdateOrdinance = async (e, filename, series) => {
+    try {
+      e.preventDefault();
+      setIsEditing(!isEditing);
+
+      const updateData = new FormData();
+      updateData.append('number', selectedOrdinance.number);
+      updateData.append('series', selectedOrdinance.series);
+      updateData.append('title', selectedOrdinance.title);
+      updateData.append('status', selectedOrdinance.status);
+
+      const res = await axiosPrivate.post(`/update-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`, updateData, {
+        headers: {'Content-Type': 'multipart/form-data'}
+      });
+      if(res.status === 200) {
+        setMessage(res.data.message);
+      } else {
+        setMessage('Error on Updating Ordinance')
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDeleteOrdinance = async (e, filename, series) => {
+    try {
+      e.preventDefault();
+      // Authenticate User using password, or with google authenticator
+      setDelModalOpen(true);
+      // const res = await axiosPrivate.delete(`/delete-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`);
+      // if (res.status === 200) {
+      //   setMessage(res.data.message);
+      // } else {
+      //   setMessage('Error on Deleting Ordinance');
+      // }
+    } catch (err) {
+      console.error(err);
+    }
   }
 
   useEffect(() => {
     let isMounted = true;
+    setLoading(true)
     sendRequest()
     .then(({
       ordinances,
@@ -145,16 +215,30 @@ const Ordinances = () => {
     return () => {
       isMounted = false;
     }
-  },[]);
+  },[ status ]); 
 
   useEffect(() => {
-    if (minutes && minutes.length > 0) {
-      const sortedMinutes = [...minutes].sort((a, b) =>
-        new Date(b.date) - new Date(a.date)
-      );
-      setSelectedItem(sortedMinutes[0]);
+    if (message) {
+      setShowAlert(true);
+
+      // Hide the alert after 3 seconds (adjust the time as needed)
+      const timer = setTimeout(() => {
+        setShowAlert(false);
+      }, 3000);
+
+      // Clear the timer when the component unmounts
+      return () => clearTimeout(timer);
     }
-  }, [minutes]);
+  }, [message]);
+
+  // useEffect(() => {
+  //   if (minutes && minutes.length > 0) {
+  //     const sortedMinutes = [...minutes].sort((a, b) =>
+  //       new Date(b.date) - new Date(a.date)
+  //     );
+  //     setSelectedItem(sortedMinutes[0]);
+  //   }
+  // }, [ minutes ]);
 
   if (loading) {
     return <Loader />;
@@ -164,7 +248,7 @@ const Ordinances = () => {
     <div className="Ordinances">
       <BreadCrumbs items={breadcrumbs} />
       <div className="Ordinances__Card">
-        <CreateOrdinances sendRequest={sendRequest()}/>
+        <CreateOrdinances sendRequest={sendRequest}/>
       </div>
       <div className="Ordinances__Container">
       <h3 className='Ordinances__Top__Title'>{status.toUpperCase()} ORDINANCES</h3>
@@ -303,10 +387,10 @@ const Ordinances = () => {
               </div>
               <div className="Ordinances__Details__Content">
                 <button onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
-                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true)}}>Cancel</button> ) : null}
-                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(true); updateRequest}}>Update</button> ) : null}
-                <button>Delete</button>
-              </div>
+                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(!isEditing)}}>Cancel</button> ) : null}
+                {!isEditing ? ( <button onClick={(e) => handleUpdateOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Update</button> ) : null}
+                <button onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Delete</button>
+             </div>
             </form>
             <div className="Ordinances__PDFViewer">
               <div className="Ordinances__Card__Container">
@@ -326,25 +410,88 @@ const Ordinances = () => {
             <div className="Ordinances__Minutes__Container">
               <h3>Minutes of the Meeting for {selectedOrdinance.title.toUpperCase()}</h3>
               <button onClick={() => setDropdown(!dropDown)}>Select Meeting Date:</button>
+              <button onClick={() => setAddMinutes(!addMinutes)}>Add Minutes of the Meeting</button>
+              { addMinutes && (
+                <div>
+                  <label htmlFor="date-time">Date:</label>
+                  <input
+                    type="datetime-local"
+                    name='date'
+                    id='date-time'
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="agenda">Agenda:</label>
+                  <input 
+                    type="text"
+                    name='agenda'
+                    id='agenda'
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="description">Description:</label>
+                  <input 
+                    type="textarea"
+                    name='description'
+                    id='description'
+                    onChange={handleChange}
+                  />
+                  <label htmlFor="speaker">Speaker:</label>
+                  <input 
+                    type="text"
+                    name='speaker'
+                    id='speaker'
+                    onChange={handleChange}
+                  />
+                  <input type="file" onChange={handleFileChange}/>
+                  <button onClick={(e) => handleUploadMinutes(e, selectedOrdinance._id, selectedOrdinance.series)}>Upload</button>
+                  {showAlert && <div className="CreateOrdinances__Alert">{message}</div>}
+                </div>
+              )}
               {dropDown && (
                 <ul>
-                  {minutes.map((item, i) => (
-                    <li key={i} onClick={() => setSelectedItem(item)}>{new Date(item.date).toLocaleString(undefined, {hour12: true})}</li>
+                  {minutes.map((minute, i) => (
+                    <li key={i} onClick={() => handleSelectMinutes(minute)}>{new Date(minute.date).toLocaleString(undefined, {hour12: true})}</li>
                   ))}
                 </ul>
               )}
               {selectedItem && (
                 <div>
-                  <p>Date: {new Date(selectedItem.date).toLocaleString(undefined, {hour12: true})}</p>
-                  <p>Agenda: {selectedItem.agenda}</p>
-                  <p>Description: {selectedItem.description}</p>
-                  <p>Speaker: {selectedItem.speaker}</p>
+                  <div>
+                    <p>Date: {new Date(selectedItem.date).toLocaleString(undefined, {hour12: true})}</p>
+                    <p>Agenda: {selectedItem.agenda}</p>
+                    <p>Description: {selectedItem.description}</p>
+                    <p>Speaker: {selectedItem.speaker}</p>
+                  </div>
+                  <div className="Ordinances__Card__Container">
+                  <div
+                    className='Ordinances__PDFViewer__Button'
+                    onClick={() => setMinCollapsed(!minCollapsed)}>
+                    <p>View Minutes File</p>
+                    {minCollapsed ? (<FontAwesomeIcon icon={icons.v}/>) : (<FontAwesomeIcon icon={icons.left}/>)}
+                  </div>
+                  <iframe
+                    className={`Ordinances__Minutes__Frame ${minCollapsed ? 'collapsed' : ''}`}
+                    title="PDF Viewer"
+                    src={minutesUrl} // Set the PDF file URL as the iframe source
+                  />
                 </div>
+              </div>
               )}
             </div>
           </div>
         </Modal>
       )}
+      <Modal isOpen={delModalOpen} closeModal={closeDelModal}>
+        <h3>Warning! You cannot undo this action! </h3>
+        <label htmlFor="password">Enter Password:</label>
+        <input type="password" />
+        {auth.otp && (
+          <div>
+            <label htmlFor="otp">Google Authenticator:</label>
+            <input type="text" />
+          </div>
+        )}
+        
+      </Modal>
     </div>
   );
 };

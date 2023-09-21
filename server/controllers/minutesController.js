@@ -13,18 +13,16 @@ const getMinutes = async (req, res) => {
 
 const postMinutes = async (req, res) => {
 	try {
-		const {date, agenda, description, speaker } = req.body;
+		const {date, agenda, description, speaker, series } = req.body;
 		const ordinanceId = req.query.ordinanceId;
-
-		console.log(ordinanceId)
 
 		if (!req.file) {
 			return res.status(400).json({message: 'No file Selected'});
 		}
 		const file = req.file.filename;
 
-		await Minutes.create({ordinanceId: ordinanceId, date, agenda, description, speaker, file: file});
-		return res.status(200).json('Uploaded Minutes of the Meeting');
+		await Minutes.create({ordinanceId: ordinanceId, date, agenda, description, speaker, series, file: file});
+		return res.status(200).json({message: 'Uploaded Minutes of the Meeting'});
 	} catch (err) {
 		return res.status(500).json({err, message: 'Internal Server Error'});
 	}

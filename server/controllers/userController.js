@@ -176,6 +176,7 @@ const loginUser = async (req, res) => {
         name: user.username,
         role: user.role,
         level: user.level,
+        otp: user.is2faOn,
         token: accessToken,
       });
     }
@@ -240,7 +241,6 @@ const useOtp = async (req, res) => {
   try {
     const userId = req.id;
     const { is2faOn } = req.body;
-    console.log(req.body)
 
     const user = await UserModel.findById(userId);
 
@@ -276,6 +276,7 @@ const getUser = async (req, res) => {
       name: user.username,
       role: user.role,
       level: user.level,
+      otp: user.is2faOn,
     });
   } catch (err) {
     res.status(400).json({err: err});

@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../utils/Icons'
-import { BASE_URL } from '../api/axios'
 import Modal from '../components/Modal';
 import Loader from "../components/Loader";
 import useAuth from "../hooks/useAuth";
@@ -34,7 +33,7 @@ const UserProfile = () => {
     try {
       const res = await axiosPrivate.get('/user');
       const data = res.data
-      setIsChecked(data.is2faOn)
+      setIsChecked(data.otp)
       return data;
     } catch (err) {
       console.log(err);
