@@ -1,6 +1,8 @@
 .CreateOrdinances {
   padding: 20px;
-  display: flex
+  display: flex;
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
 .CreateOrdinances__Container {

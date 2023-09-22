@@ -85,7 +85,7 @@ const CreateOrdinances = ({sendRequest}) => {
   return (
     <div className="CreateOrdinances">
       <h1>List of Ordinances</h1>
-      <button onClick={openModal}>Create New Ordinance</button>
+      <button className="CreateOrdinances__Button" onClick={openModal}>Create New Ordinance</button>
       <Modal 
         isOpen={isModalOpen} 
         closeModal={closeModal}

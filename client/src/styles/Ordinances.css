@@ -103,10 +103,11 @@ td, th {
 
 .Ordinances__Details__Form {
   height: max-content;
-  background-color: gainsboro;
+  background-color: var(--secondary-color);
   border-radius: 15px;
   padding: 20px;
   margin-bottom: 10px;
+  color: white;
 }
 
 .Ordinances__Details__Title {
@@ -117,7 +118,8 @@ td, th {
 .Ordinances__Details__Title__Input {
   font-size: 1rem;
   border: none;
-  background-color: gainsboro;
+  background-color: transparent;
+  color: white;
 }
 
 .Ordinances__Details__Title__Input.editing {
@@ -161,4 +163,15 @@ td, th {
   justify-content: space-between;
   user-select: none;
   cursor: pointer;
+}
+.Ordinances__update__button{
+background-color: var(--orange-color);
+border: none;
+}
+.Ordinances__delete__button{
+  border: none;
+  background-color: var(--error-color);
+}
+.Ordinances__Upload__button{
+  background-color:var(--highlight-color);
 }

@@ -414,10 +414,10 @@ const Ordinances = () => {
                 )}
               </div>
               <div className="Ordinances__Details__Content">
-                <button onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
+                <button className="Ordinances__update__button" onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
                 {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(!isEditing)}}>Cancel</button> ) : null}
                 {!isEditing ? ( <button onClick={(e) => handleUpdateOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Update</button> ) : null}
-                <button onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Delete</button>
+                <button className='Ordinances__delete__button' onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Delete</button>
              </div>
             </form>
             { (selectedOrdinance.status === 'draft' || selectedOrdinance.status === 'pending') && (
@@ -480,7 +480,7 @@ const Ordinances = () => {
                     onChange={handleChange}
                   />
                   <input type="file" onChange={handleFileChange}/>
-                  <button onClick={(e) => handleUploadMinutes(e, selectedOrdinance._id, selectedOrdinance.series)}>Upload</button>
+                  <button className='Ordinances__Upload__button'onClick={(e) => handleUploadMinutes(e, selectedOrdinance._id, selectedOrdinance.series)}>Upload</button>
                   {showAlert && <div className="CreateOrdinances__Alert">{message}</div>}
                 </div>
               )}
