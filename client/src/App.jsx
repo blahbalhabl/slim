@@ -12,10 +12,7 @@ import Login from "./pages/Login"
 import Signup from "./pages/Signup"
 import Dashboard from "./pages/Dashboard"
 import Unauthorized from "./pages/Unauthorized"
-import RandomPage from "./pages/RandomPage"
-import AdminPage from "./pages/AdminPage"
 import Ordinances from "./pages/Ordinances"
-import Enacted from "./pages/Enacted"
 import Profile from "./pages/Profile"
 import { roles } from "./utils/userRoles"
 
@@ -40,7 +37,6 @@ const level = roles.level;
         <Route element={<PersistLogin />}>
           {/* Public routes with Persistent Login */}
           <Route path="/unauthorized" element={<Unauthorized />} />
-          <Route path="/random-page" element={<RandomPage />} />
           
           {/* Private All Roles Route */}
           <Route element={<RequireAuth allowedRoles={[role.adn, role.spr, role.usr]}/>}>
@@ -50,7 +46,6 @@ const level = roles.level;
 
           {/* Private Admin Routes*/}
           <Route element={<RequireAuth allowedRoles={[role.adn]} />}>
-            <Route path="/admin-page" element={<AdminPage />} />
             <Route path="/records/ordinances/:status" element={<Ordinances />} />
           </Route>
 

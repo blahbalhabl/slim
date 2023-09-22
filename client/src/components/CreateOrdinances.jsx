@@ -17,6 +17,7 @@ const CreateOrdinances = ({sendRequest}) => {
     number: "",
     series: "",
     title: "",
+    author: "",
   });
   const [file, setFile] = useState();
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,6 +52,7 @@ const CreateOrdinances = ({sendRequest}) => {
       formData.append('title', inputs.title);
       formData.append('status', 'draft');
       formData.append('level', auth.level);
+      formData.append('author', inputs.author);
       formData.append('file', file);
       const res = await axiosPrivate.post('/upload/ordinance/draft?type=ordinances', formData, {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -117,6 +119,15 @@ const CreateOrdinances = ({sendRequest}) => {
                   name='title'
                   id='ordinance-title'
                   placeholder="e.g. 'First Amendment'"
+                  onChange={handleChange}
+                />
+                <label htmlFor="ordinance-title">Author:</label>
+                <input 
+                  className='CreateOrdinances__Input'
+                  type="text"
+                  name='author'
+                  id='ordinance-author'
+                  placeholder="e.g. 'Mark Leigh'"
                   onChange={handleChange}
                 />
               </div>

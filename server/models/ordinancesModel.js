@@ -36,9 +36,14 @@ const ordinanceSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  minutesOfMeeting: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "MinutesOfMeeting",
+  author: {
+    type: String,
+    required: true,
+  },
+  proceedings: {
+    type: Date,
+    required: false,
+    default: null,
   },
   createdAt: {
     type: Date,

@@ -35,6 +35,15 @@ const brgySchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  author: {
+    type: String,
+    required: true,
+  },
+  proceedings: {
+    type: Date,
+    required: false,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

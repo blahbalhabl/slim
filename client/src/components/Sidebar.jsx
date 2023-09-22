@@ -46,18 +46,7 @@ const Sidebar = () => {
           {!collapsed && <p>Dashboard</p>}
         </Link>
         {auth && auth.role === role.adn && (
-          <>
-            <Accordion data={sidebarAccordion} collapse={collapsed} />
-            <Link
-              className={`Sidebar__Button ${
-                isActive(links.adn) ? 'active' : ''
-              }`}
-              to={links.adn}
-            >
-              <FontAwesomeIcon icon={icons.lock} />
-              {!collapsed && <p>Admin Page</p>}
-            </Link>
-          </>
+          <Accordion data={sidebarAccordion} collapse={collapsed} />
         )}
         {auth && auth.role === role.spr && (
           <Link
@@ -70,13 +59,6 @@ const Sidebar = () => {
             {!collapsed && <p>Users</p>}
           </Link>
         )}
-        <Link
-          className={`Sidebar__Button ${isActive(links.ran) ? 'active' : ''}`}
-          to={links.ran}
-        >
-          <FontAwesomeIcon icon={icons.file} />
-          {!collapsed && <p>Random Page</p>}
-        </Link>
       </div>
     </div>
   ) : null;

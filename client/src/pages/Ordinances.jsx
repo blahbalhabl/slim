@@ -35,6 +35,8 @@ const Ordinances = () => {
     agenda: "",
     description: "",
     speaker: "",
+    author: "",
+    proceedings: "",
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -166,6 +168,8 @@ const Ordinances = () => {
       updateData.append('series', selectedOrdinance.series);
       updateData.append('title', selectedOrdinance.title);
       updateData.append('status', selectedOrdinance.status);
+      updateData.append('author', selectedOrdinance.author);
+      updateData.append('proceedings', selectedOrdinance.proceedings);
 
       const res = await axiosPrivate.post(`/update-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`, updateData, {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -384,6 +388,30 @@ const Ordinances = () => {
                   onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
                   readOnly={isEditing}
                 />
+                <label htmlFor="author">Author:</label>
+                <input
+                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                  type="text"
+                  name='author'
+                  id='author'
+                  value={selectedOrdinance.author}
+                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
+                  readOnly={isEditing}
+                />
+                {!isEditing && (
+                  <>
+                    <label htmlFor="proceeding">Next Proceeding:</label>
+                    <input
+                      className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                      type="datetime-local"
+                      name='proceeding'
+                      id='proceeding'
+                      value={selectedOrdinance.proceedings}
+                      onChange={(e) => setSelectedOrdinance({...selectedOrdinance, proceedings: e.target.value})}
+                      readOnly={isEditing}
+                    />
+                  </>
+                )}
               </div>
               <div className="Ordinances__Details__Content">
                 <button onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
@@ -392,6 +420,16 @@ const Ordinances = () => {
                 <button onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Delete</button>
              </div>
             </form>
+            { (selectedOrdinance.status === 'draft' || selectedOrdinance.status === 'pending') && (
+            <div className='Ordinances__Card__Container'>
+              <div className='Ordinances__Proceedings'>
+                <h3>Proceedings</h3>
+                <p>Proceedings of the Sangguniang Bayan of the Municipality of Bacolor, Province of Pampanga, held at the Session Hall on 
+                  <strong>{new Date(selectedOrdinance.proceedings).toLocaleString(undefined, {hour12: true})}</strong>
+                </p>
+              </div>
+            </div>
+            )}
             <div className="Ordinances__PDFViewer">
               <div className="Ordinances__Card__Container">
                 <div

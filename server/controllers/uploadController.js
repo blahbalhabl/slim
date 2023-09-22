@@ -8,7 +8,7 @@ const draftOrdinance = async (req, res) => {
       return res.status(400).json({err: 'No file found!'})
     }
   
-    const { number, series, title, status, level } = req.body;
+    const { number, series, title, status, level, author } = req.body;
     const file = req.file.filename;
     const size = req.file.size / 1024;
     const rounded = Math.round(size * 100) / 100;
@@ -28,7 +28,7 @@ const draftOrdinance = async (req, res) => {
     }
   
     // Create the ordinance in Barangay or Ordinance Schema
-    await model.create({ number, title, series, status, file, mimetype, accessLevel: level, size: rounded });
+    await model.create({ number, title, series, status, file, mimetype, accessLevel: level, size: rounded, author });
 
     res.status(200).json({message: 'Successfully Uploaded!'});
   } catch (err) {
