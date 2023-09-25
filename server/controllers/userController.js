@@ -260,7 +260,10 @@ const useOtp = async (req, res) => {
 const getUsers = async (req, res) => {
   try {
     const users = await UserModel.find().lean().exec();
-    res.status(200).json(users);
+    const lgu = await UserModel.countDocuments({level: 'LGU'}).lean().exec();
+    const dilg = await UserModel.countDocuments({level: 'DILG'}).lean().exec();
+    const brgy = await UserModel.countDocuments({level: 'BARANGAY'}).lean().exec();
+    res.status(200).json({ users, lgu, dilg, brgy });
   } catch (err) {
     res.status(400).json({err: err});
   }

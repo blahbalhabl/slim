@@ -1,5 +1,6 @@
 import useAuth from "../hooks/useAuth";
 import Admin from "../components/Admin"
+import SuperAdmin from "../components/SuperAdmin";
 import UserProfile from "./Profile";
 import Calendar from "../components/Calendar";
 import { roles } from "../utils/userRoles";
@@ -22,7 +23,7 @@ const Dashboard = () => {
           { auth && auth?.role === role.adn 
             ? <Admin />
             : auth && auth?.role === role.spr
-            ? <Admin />
+            ? <SuperAdmin />
             : null
           }
 

@@ -67,13 +67,6 @@ const Users = () => {
   return (
     <div className="Admin">
       <div className="Admin__Container">
-        <div className="Admin__Card users">
-          <div className="Admin__Card__Info">
-            <p>Number of Users:</p>
-            <p>{ users.length }</p>
-          </div>
-          <span><FontAwesomeIcon icon={icons.user}/></span>
-        </div>
         <div className="Admin__Card" onClick={() => navigate('/records/ordinances/all')}>
           <div className="Admin__Card__Info">
             <p>Number of Ordinances</p>

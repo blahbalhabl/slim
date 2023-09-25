@@ -122,6 +122,10 @@ const Ordinances = () => {
       setSelectedOrdinance(ordinance);
       const minutes = await axiosPrivate.get(`/minutes/${ordinance._id}`);
       setMinutes(minutes.data);
+      
+      if (minutes.data.length === 0) {
+        setMinutes(null);
+      };
 
       const response = await axiosPrivate.get(`/download/${ordinance.file}?type=ordinances&level=${auth.level}&series=${ordinance.series}`, {
         responseType: 'blob',
@@ -138,7 +142,7 @@ const Ordinances = () => {
 
   const handleSelectMinutes = async (minute) => {
     try {
-      setSelectedItem(minute)
+      setSelectedItem(minute);
       const minResponse = await axiosPrivate.get(`/download/${minute.file}?type=minutes&level=${auth.level}&series=${selectedOrdinance.series}`, {
         responseType: 'blob',
       });
@@ -559,20 +563,23 @@ const Ordinances = () => {
                   onClick={() => setDropdown(!dropDown)}>
                     Select Meeting Date
                 </button>
-                {dropDown && selectedOrdinance.proceedings && (
+                {dropDown && (
                   <ul>
-                    {minutes.map((minute, i) => (
+                    {minutes ? 
+                      (minutes.map((minute, i) => (
                       <li
                         className='Ordinances__Minutes__List'
                         key={i}
                         onClick={() => handleSelectMinutes(minute)}>
                           {new Date(minute.date).toLocaleString(undefined, {hour12: true})}
                       </li>
-                    ))}
+                      ))) : 
+                      ( <li>No Minutes</li> )
+                    }
                   </ul>
                 )}
               </div>
-              {selectedItem && selectedOrdinance.proceedings && (
+              {selectedItem && minutes && (
                 <div>
                   <div>
                     <p>Date: {new Date(selectedItem.date).toLocaleString(undefined, {hour12: true})}</p>
