@@ -128,7 +128,6 @@ const updateOrdinance = async (req, res) => {
       updateData.file = updateFile;
     }
 
-    let exists;
     let model;
 
     if (level === 'BARANGAY') {
@@ -137,7 +136,7 @@ const updateOrdinance = async (req, res) => {
       model = Ordinance;
     }
     
-    exists = await model.findOneAndUpdate(
+    const exists = await model.findOneAndUpdate(
       { file: fileName },
       { $set: updateData, file: updateFile},
       { new: true }
@@ -157,9 +156,36 @@ const updateOrdinance = async (req, res) => {
     return res.status(200).json({ message: 'Ordinance file updated successfully' });
   } catch (err) {
     console.error('Error updating ordinance file:', err);
-    res.status(500).json({ message: 'Internal Server Error' });
+    res.status(500).json({err, message: 'Internal Server Error' });
   }
 };
+
+const updateProceedings = async (req, res) => {
+  try {
+    const proceedings = req.body;
+    const fileName = req.params.filename;
+    const { level } = req.query;
+
+    console.log(req.body)
+    let model;
+
+    if (level === 'BARANGAY') {
+      model = Barangay;
+    } else {
+      model = Ordinance;
+    }
+
+    await model.findOneAndUpdate(
+      { file: fileName },
+      { $set: proceedings},
+      { new: true }
+    );
+    
+    return res.status(200).json({ message: 'New Proceedings Schedule Updated' });
+  } catch (err) {
+    return res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}
 
 const downloadOrdinance = (req, res) => {
   try {
@@ -189,4 +215,5 @@ module.exports = {
   updateOrdinance,
   updateOrdinance,
   downloadOrdinance,
+  updateProceedings,
 }

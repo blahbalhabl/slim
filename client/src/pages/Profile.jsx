@@ -5,6 +5,7 @@ import { icons } from '../utils/Icons'
 import Modal from '../components/Modal';
 import Loader from "../components/Loader";
 import useAuth from "../hooks/useAuth";
+import Alert from "../components/Alert";
 
 import '../styles/Profile.css'
 
@@ -16,6 +17,7 @@ const UserProfile = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
+  const [serverMessage, setServerMessage] = useState('');
   const [inputs, setInputs] = useState({
     oldpass: "",
     newpass: "",
@@ -57,8 +59,8 @@ const UserProfile = () => {
         headers: {'Content-Type': 'application/json'}
       });
       if (res.status === 200) {
-        console.log('User data updated successfully.');
         setIsChecked(is2faOn); // Update the state locally
+        setServerMessage(res.data.message);
       } else {
         console.error('Failed to update user data.');
       }
@@ -112,8 +114,6 @@ const UserProfile = () => {
       console.log(err);
     }
   }
-
-  
 
   const handleAvatarUpdate = () => {
     setIsButtonVisible(true);
@@ -249,6 +249,7 @@ const UserProfile = () => {
     ) : (
         <Loader />
       )}
+      <Alert message={serverMessage} onClose={() => setServerMessage('')}/>
     </div>
   );
 };

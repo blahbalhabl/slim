@@ -4,16 +4,19 @@ import useAuth from "../hooks/useAuth";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from "../utils/Icons";
 import axios from "../api/axios";
+import Alert from "../components/Alert";
+import OtpInput from 'react-otp-input';
 import '../styles/Login.css'
 
 const Login = () => {
   const [otp, setOtp] = useState();
   const [visible, setVisible] = useState(false);
-  const [loginError, setLoginError] = useState(); 
+  const [otpValue, setOtpValue] = useState('');
+  const [serverMessage, setServerMessage] = useState('');
   const inputType = visible ? "text" : "password";
   const toggleIcon = visible ? <FontAwesomeIcon icon={icons.eye} /> : <FontAwesomeIcon icon={icons.eyeslash} />;
 
-  const { setAuth, persist, setPersist } = useAuth();
+  const { setAuth, persist } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from.pathname || '/';
@@ -21,7 +24,6 @@ const Login = () => {
   const [inputs, setInputs] = useState({
     email: "",
     password: "",
-    otp: "",
   });
 
   const handleChange = (e) => {
@@ -37,13 +39,11 @@ const Login = () => {
       const userData = {
         email: inputs.email,
         password: inputs.password,
-        otp: inputs.otp || null,
+        otp: otpValue || null,
       };
 
       const res = await axios.post('/login', userData, {
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: {"Content-Type": "application/json"},
       });
 
       const data = await res.data;
@@ -55,15 +55,13 @@ const Login = () => {
       } else if (res.status === 201) {
         setOtp(true);
       } else {
-        console.log("Login failed", res.statusText);
+        setServerMessage(data.message);
       }
 
       if (otp) {
         // If otp returned as true
         const res = await axios.post('/verify', userData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: {"Content-Type": "application/json"},
         });
 
         if (res.status === 200) {
@@ -71,16 +69,13 @@ const Login = () => {
           setAuth(data);
           navigate(from, { replace: true });
           return data;
+        } else {
+          setServerMessage(data.message);
         }
       }
     } catch (err) {
-      setLoginError("Incorrect Credentials!");
-      console.log("Error during login", err);
+      setServerMessage("Incorrect Credentials!"); 
     }
-  };
-
-  const togglePersist = () => {
-    setPersist(prev => !prev);
   };
 
   useEffect(() => {
@@ -89,10 +84,8 @@ const Login = () => {
 
   return (
     <div className="Login">
-      
       <form onSubmit={userLogin}>
         <div className="Login__Container">
-        {loginError && <p className="Login__Error__Message">{loginError}</p>}
           <h4>Login</h4>
           <input 
             type="email"
@@ -115,33 +108,31 @@ const Login = () => {
           </span>
           <br />
           { otp && (
-            <input 
-            type='text'
-            name="otp"
-            onChange={handleChange}
-            placeholder="OTP" 
-            required
-          />
+            <label htmlFor="otp">Google Authenticator OTP
+              <OtpInput
+              id="otp"
+              inputStyle="Login__OTP"
+              inputType="number"
+              value={otpValue}
+              onChange={setOtpValue}
+              numInputs={6}
+              renderInput={(props) => <input {...props} />}
+              />
+            </label>
           )}
           <button
             className="Login__Button"
             type="submit" 
-            > Login
+            > {otp ? "Verify OTP" : "Login"}
           </button>
-          <div className="Login__Remember">
-            <input 
-              type="checkbox"
-              id="remember"
-              onChange={togglePersist}
-              checked={persist}
-            />
-            <label>Trust This Device</label>
-          </div>
-          <div>
+          <div
+            onClick={() => navigate('/forgot-password')}
+            className="Login__Forgot__Password">
             Forgot Password
           </div>
         </div>
       </form>
+      <Alert message={serverMessage} onClose={() => setServerMessage('')}/>
     </div>
   );
 };

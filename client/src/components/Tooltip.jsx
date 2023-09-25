@@ -1,40 +1,49 @@
-import { useState } from "react"
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { useState, useEffect, useRef } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { icons } from "../utils/Icons";
-import '../styles/Tooltip.css'
+import "../styles/Tooltip.css";
 
-const Tooltip = ({data}) => {
-
+const Tooltip = ({ data }) => {
   const [tooltip, setTooltip] = useState(false);
-  // const [overlay, setOverlay] = useState(false);
+  const tooltipRef = useRef(null);
 
   const toggleTooltip = () => {
-		setTooltip((prev) => !prev);
-    // setOverlay((prev) => !prev);
-	};
+    setTooltip((prev) => !prev);
+  };
+
+  const handleOutsideClick = (e) => {
+    if (tooltipRef.current && !tooltipRef.current.contains(e.target)) {
+      setTooltip(false);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener("mousedown", handleOutsideClick);
+    return () => {
+      document.removeEventListener("mousedown", handleOutsideClick);
+    };
+  }, []);
 
   return (
-		<>
+    <>
       {data.map((item, i) => (
         <div key={i}>
           <div className="Tooltip" onClick={toggleTooltip}>
             <FontAwesomeIcon icon={icons.v} />
           </div>
           {tooltip && (
-            <>
-            <div className="Tooltip__Body">
+            <div className="Tooltip__Body" ref={tooltipRef}>
               <div key={i}>
-                <ul className="Tooltip__Buttons">{item.buttons}</ul>
+                <ul onClick={toggleTooltip} className="Tooltip__Buttons">
+                  {item.buttons}
+                </ul>
               </div>
             </div>
-            {/* <div className="Tooltip__Overlay" onClick={toggleTooltip}></div> */}
-            </>
           )}
         </div>
       ))}
-     
     </>
-  )
+  );
 };
 
-export default Tooltip
+export default Tooltip;

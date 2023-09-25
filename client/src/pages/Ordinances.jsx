@@ -30,18 +30,17 @@ const Ordinances = () => {
   const [minCollapsed, setMinCollapsed] = useState(true);
   const [selectedOrdinance, setSelectedOrdinance] = useState(null);
   const [showAlert, setShowAlert] = useState(false);
+  const [isDateChanged, setDateChanged] = useState(false);
   const [inputs, setInputs] = useState({
     date: "",
     agenda: "",
     description: "",
-    speaker: "",
-    author: "",
-    proceedings: "",
+    speaker: ""
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => {setIsModalOpen(false); setDropdown(false)}
   const [delModalOpen, setDelModalOpen] = useState(false);
   const openDelModal = () => setDelModalOpen(true);
   const closeDelModal = () => setDelModalOpen(false);
@@ -98,6 +97,25 @@ const Ordinances = () => {
       console.log(err);
     }
   };
+
+  const handleProceedingChange = (e) => {
+    setSelectedOrdinance({ ...selectedOrdinance, proceedings: e.target.value });
+    setDateChanged(true); 
+  };
+
+  const handleChangeProceedingDate = async (e, filename) => {
+    try {
+      e.preventDefault();
+      const proceedings = selectedOrdinance.proceedings;
+      console.log(proceedings)
+
+      const res = await axiosPrivate.post(`/update-proceedings/${filename}?level=${auth.level}`, {proceedings}, {
+        headers: {'Content-Type': 'application/json'}
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  }
  
   const handleOrdinanceClick = async (ordinance) => {
     try {
@@ -162,14 +180,17 @@ const Ordinances = () => {
     try {
       e.preventDefault();
       setIsEditing(!isEditing);
+      setDateChanged(false);
 
       const updateData = new FormData();
+      updateData.append('level', auth.level);
       updateData.append('number', selectedOrdinance.number);
       updateData.append('series', selectedOrdinance.series);
       updateData.append('title', selectedOrdinance.title);
       updateData.append('status', selectedOrdinance.status);
       updateData.append('author', selectedOrdinance.author);
       updateData.append('proceedings', selectedOrdinance.proceedings);
+      updateData.append('file', file);
 
       const res = await axiosPrivate.post(`/update-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`, updateData, {
         headers: {'Content-Type': 'multipart/form-data'}
@@ -234,15 +255,6 @@ const Ordinances = () => {
       return () => clearTimeout(timer);
     }
   }, [message]);
-
-  // useEffect(() => {
-  //   if (minutes && minutes.length > 0) {
-  //     const sortedMinutes = [...minutes].sort((a, b) =>
-  //       new Date(b.date) - new Date(a.date)
-  //     );
-  //     setSelectedItem(sortedMinutes[0]);
-  //   }
-  // }, [ minutes ]);
 
   if (loading) {
     return <Loader />;
@@ -347,85 +359,135 @@ const Ordinances = () => {
           <h2>ORDINANCE DETAILS</h2>
             <form className='Ordinances__Details__Form'>
               <div className="Ordinances__Details__Title">
-                <p>ORDINANCE NO </p>
-                <input
-                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                  type="number"
-                  name="number"
-                  id="number"
-                  style={{width: '50px'}}
-                  value={selectedOrdinance.number}
-                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, number: e.target.value})} 
-                  readOnly={isEditing}
-                />
-                  <p>, Series of</p>
-                <input
-                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                  type="number"
-                  name="series"
-                  id="series"
-                  style={{width: '50px'}}
-                  value={selectedOrdinance.series}
-                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, series: e.target.value})}
-                  readOnly={isEditing}
-                />
-                <input
-                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                  type="text"
-                  name='title'
-                  id='title'
-                  value={selectedOrdinance.title}
-                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, title: e.target.value})}
-                  readOnly={isEditing}
-                />
-                <label htmlFor="status">Status:</label>
-                <input
-                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                  type="text"
-                  name='status'
-                  id='status'
-                  value={selectedOrdinance.status}
-                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
-                  readOnly={isEditing}
-                />
-                <label htmlFor="author">Author:</label>
-                <input
-                  className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                  type="text"
-                  name='author'
-                  id='author'
-                  value={selectedOrdinance.author}
-                  onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
-                  readOnly={isEditing}
-                />
+                <label htmlFor="number">ORDINANCE NO 
+                  <input
+                    className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                    type="number"
+                    name="number"
+                    id="number"
+                    value={selectedOrdinance.number}
+                    onChange={(e) => setSelectedOrdinance({...selectedOrdinance, number: e.target.value})} 
+                    readOnly={isEditing}
+                  />
+                </label>
+                <label htmlFor="series">Series of
+                  <input
+                    className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                    type="number"
+                    name="series"
+                    id="series"
+                    value={selectedOrdinance.series}
+                    onChange={(e) => setSelectedOrdinance({...selectedOrdinance, series: e.target.value})}
+                    readOnly={isEditing}
+                  />
+                </label>
+                <label htmlFor="title">Title: 
+                  <input
+                    className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                    type="text"
+                    name='title'
+                    id='title'
+                    value={selectedOrdinance.title}
+                    onChange={(e) => setSelectedOrdinance({...selectedOrdinance, title: e.target.value})}
+                    readOnly={isEditing}
+                  />
+                </label>
+                <label htmlFor="status">Status:
+                  <select
+                    className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                    name='status'
+                    id='status'
+                    style={{width: '10rem'}}
+                    value={selectedOrdinance.status}
+                    onChange={(e) => setSelectedOrdinance({...selectedOrdinance, status: e.target.value})}
+                    disabled={isEditing}>
+                      <option style={{color: 'orange'}} value="draft">Draft</option>
+                      <option style={{color: 'yellow'}}value="pending">Pending</option>
+                      <option style={{color: 'green'}}value="enacted">Enacted</option>
+                      <option style={{color: 'blue'}}value="approved">Approved</option>
+                      <option style={{color: 'green'}}value="amended">Amended</option>
+                      <option style={{color: 'red'}}value="vetoed">Vetoed</option>
+                  </select>
+                </label>
+                <label htmlFor="author">Author:
+                  <select
+                    className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
+                    name='author'
+                    id='author'
+                    value={selectedOrdinance.author}
+                    onChange={(e) =>setSelectedOrdinance({ ...selectedOrdinance, author: e.target.value })}
+                    disabled={isEditing}
+                  >
+                    <option value="Mark Leigh David">Mark Leigh David</option>
+                    <option value="Kenneth Rana">Kenneth Rana</option>
+                  </select>
+                </label>
+              </div>
+              <div>
                 {!isEditing && (
-                  <>
-                    <label htmlFor="proceeding">Next Proceeding:</label>
-                    <input
-                      className={`Ordinances__Details__Title__Input ${isEditing ? '' : 'editing'}`}
-                      type="datetime-local"
-                      name='proceeding'
-                      id='proceeding'
-                      value={selectedOrdinance.proceedings}
-                      onChange={(e) => setSelectedOrdinance({...selectedOrdinance, proceedings: e.target.value})}
-                      readOnly={isEditing}
+                  <label htmlFor="file">Select File:
+                    <input 
+                      type="file"
+                      name='file'
+                      id='file'
+                      onChange={handleFileChange}
                     />
-                  </>
+                  </label>
                 )}
               </div>
               <div className="Ordinances__Details__Content">
-                <button className="Ordinances__update__button" onClick={(e) => {e.preventDefault(); setIsEditing(false)}}>Edit</button>
-                {!isEditing ? ( <button onClick={(e) => {e.preventDefault(); setIsEditing(!isEditing)}}>Cancel</button> ) : null}
-                {!isEditing ? ( <button onClick={(e) => handleUpdateOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Update</button> ) : null}
-                <button className='Ordinances__delete__button' onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>Delete</button>
+                <div>
+                  <button 
+                    className="Ordinances__Edit__Button" 
+                    onClick={(e) => {e.preventDefault(); setIsEditing(!isEditing)}}>
+                      <FontAwesomeIcon icon={icons.pencil} />
+                  </button>
+                  <button 
+                    className='Ordinances__Delete__Button' 
+                    onClick={(e) => handleDeleteOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>
+                      <FontAwesomeIcon icon={icons.trash}/>
+                  </button>
+                </div>
+                {!isEditing && (
+                  <div>
+                    <button
+                      className='Ordinances__Cancel__Button'
+                      onClick={(e) => {e.preventDefault(); setIsEditing(!isEditing)}}>
+                        Cancel
+                    </button>
+                    <button
+                      className='Ordinances__Update__Button'
+                      onClick={(e) => handleUpdateOrdinance(e, selectedOrdinance.file, selectedOrdinance.series)}>
+                        Update
+                    </button>
+                  </div>
+                )}
              </div>
             </form>
+            { selectedOrdinance.status === 'draft' || selectedOrdinance.status === 'pending' ? (
+            <div className="Ordinances__Details__Proceedings">
+              <label htmlFor="proceeding">Next Proceeding Schedule: 
+                <input
+                  className={`Ordinances__Details__Title__Input editing`}
+                  style={{fontSize: '1rem'}}
+                  type="datetime-local"
+                  name='proceeding'
+                  id='proceeding'
+                  value={selectedOrdinance.proceedings}
+                  onChange={handleProceedingChange}
+                />
+              </label>
+              {isDateChanged && (
+                <button onClick={(e) => handleChangeProceedingDate(e, selectedOrdinance.file)}>Update</button>
+              )}
+            </div>
+            ) : null }
             { (selectedOrdinance.status === 'draft' || selectedOrdinance.status === 'pending') && (
             <div className='Ordinances__Card__Container'>
               <div className='Ordinances__Proceedings'>
                 <h3>Proceedings</h3>
                 <p>Proceedings of the Sangguniang Bayan of the Municipality of Bacolor, Province of Pampanga, held at the Session Hall on 
-                  <strong>{new Date(selectedOrdinance.proceedings).toLocaleString(undefined, {hour12: true})}</strong>
+                  <strong> {new Date(selectedOrdinance.proceedings).toLocaleString(undefined, {hour12: true})}</strong>
                 </p>
               </div>
             </div>
@@ -447,51 +509,70 @@ const Ordinances = () => {
             </div>
             <div className="Ordinances__Minutes__Container">
               <h3>Minutes of the Meeting for {selectedOrdinance.title.toUpperCase()}</h3>
-              <button onClick={() => setDropdown(!dropDown)}>Select Meeting Date:</button>
-              <button onClick={() => setAddMinutes(!addMinutes)}>Add Minutes of the Meeting</button>
-              { addMinutes && (
+              <div className='Ordinances__Minutes__Buttons'>
+                <button
+                  className='Ordinances__Minutes__Add'
+                  onClick={() => setAddMinutes(!addMinutes)}>
+                    Add Minutes of the Meeting
+                </button>
+                { addMinutes && (
                 <div>
-                  <label htmlFor="date-time">Date:</label>
-                  <input
-                    type="datetime-local"
-                    name='date'
-                    id='date-time'
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="agenda">Agenda:</label>
-                  <input 
-                    type="text"
-                    name='agenda'
-                    id='agenda'
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="description">Description:</label>
-                  <input 
-                    type="textarea"
-                    name='description'
-                    id='description'
-                    onChange={handleChange}
-                  />
-                  <label htmlFor="speaker">Speaker:</label>
-                  <input 
-                    type="text"
-                    name='speaker'
-                    id='speaker'
-                    onChange={handleChange}
-                  />
+                  <label htmlFor="date-time">Date:
+                    <input
+                      type="datetime-local"
+                      name='date'
+                      id='date-time'
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label htmlFor="agenda">Agenda:
+                    <input 
+                      type="text"
+                      name='agenda'
+                      id='agenda'
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label htmlFor="speaker">Speaker:
+                    <input 
+                      type="text"
+                      name='speaker'
+                      id='speaker'
+                      onChange={handleChange}
+                    />
+                  </label>
+                  <label htmlFor="description">Description:
+                    <input 
+                      type="textarea"
+                      name='description'
+                      id='description'
+                      onChange={handleChange}
+                    />
+                  </label>
                   <input type="file" onChange={handleFileChange}/>
                   <button className='Ordinances__Upload__button'onClick={(e) => handleUploadMinutes(e, selectedOrdinance._id, selectedOrdinance.series)}>Upload</button>
                   {showAlert && <div className="CreateOrdinances__Alert">{message}</div>}
                 </div>
               )}
-              {dropDown && (
-                <ul>
-                  {minutes.map((minute, i) => (
-                    <li key={i} onClick={() => handleSelectMinutes(minute)}>{new Date(minute.date).toLocaleString(undefined, {hour12: true})}</li>
-                  ))}
-                </ul>
-              )}
-              {selectedItem && (
+                <button
+                  className='Ordinances__Minutes__Dropdown'
+                  onClick={() => setDropdown(!dropDown)}>
+                    Select Meeting Date
+                </button>
+                {dropDown && selectedOrdinance.proceedings && (
+                  <ul>
+                    {minutes.map((minute, i) => (
+                      <li
+                        className='Ordinances__Minutes__List'
+                        key={i}
+                        onClick={() => handleSelectMinutes(minute)}>
+                          {new Date(minute.date).toLocaleString(undefined, {hour12: true})}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              {selectedItem && selectedOrdinance.proceedings && (
                 <div>
                   <div>
                     <p>Date: {new Date(selectedItem.date).toLocaleString(undefined, {hour12: true})}</p>

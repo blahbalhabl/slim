@@ -6,6 +6,7 @@ import Tooltip from "./Tooltip";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { icons } from '../utils/Icons'
 import useAxiosPrivate from "../hooks/useAxiosPrivate";
+import logo from '../assets/site-logo.png';
 import "../styles/Header.css";
 
 const Header = () => {
@@ -13,7 +14,7 @@ const Header = () => {
   const navigate = useNavigate();
   const logout = useLogout();
   const { auth } = useAuth();
-  const [ logo, setLogo ] = useState();
+  // const [ logo, setLogo ] = useState();
   const [imageSrc, setImageSrc] = useState(null);
 
   const signOut = async () => {
@@ -64,22 +65,22 @@ const Header = () => {
           console.error('Error fetching image:', error);
         });
 
-      axiosPrivate.get(`uploads/images/site-logo.png`, {
-          responseType: 'arraybuffer',
-        })
-        .then((response) => {
-          const base64Image = btoa(
-            new Uint8Array(response.data).reduce(
-              (data, byte) => data + String.fromCharCode(byte),
-              ''
-            )
-          );
-          const dataURL = `data:${response.headers['content-type']};base64,${base64Image}`;
-          setLogo(dataURL);
-        })
-        .catch((error) => {
-          console.error('Error fetching image:', error);
-        });
+      // axiosPrivate.get(`uploads/images/site-logo.png`, {
+      //     responseType: 'arraybuffer',
+      //   })
+      //   .then((response) => {
+      //     const base64Image = btoa(
+      //       new Uint8Array(response.data).reduce(
+      //         (data, byte) => data + String.fromCharCode(byte),
+      //         ''
+      //       )
+      //     );
+      //     const dataURL = `data:${response.headers['content-type']};base64,${base64Image}`;
+      //     setLogo(dataURL);
+      //   })
+      //   .catch((error) => {
+      //     console.error('Error fetching image:', error);
+      //   });
     }
   }, [auth]);
 

@@ -17,7 +17,7 @@ const Sidebar = () => {
     dash: '/',
     adn: '/admin-page',
     sign: '/auth/signup',
-    ran: '/random-page',
+    mem: '/sanggunian-members',
   };
 
   const toggleSidebar = () => {
@@ -58,6 +58,17 @@ const Sidebar = () => {
             <FontAwesomeIcon icon={icons.user} />
             {!collapsed && <p>Users</p>}
           </Link>
+        )}
+        { auth && auth.role === role.spr || auth.role === role.adn && (
+          <Link
+          className={`Sidebar__Button ${
+            isActive(links.sign) ? 'active' : ''
+          }`}
+          to={links.mem}
+        >
+          <FontAwesomeIcon icon={icons.user} />
+          {!collapsed && <p>Sanggunian Members</p>}
+        </Link>
         )}
       </div>
     </div>

@@ -8,7 +8,8 @@ const {
    delOrdinance,
    updateOrdinance,
    countOrdinances,
-   downloadOrdinance, 
+   downloadOrdinance,
+   updateProceedings,
 } = require('../controllers/uploadController');
 const { uploadLogo } = require('../controllers/avatarController');
 const router = Router();
@@ -21,6 +22,7 @@ router.use('/uploads/files', express.static('uploads/files'));
 router.get('/ordinances', getOrdinances);
 router.get('/count-ordinances', countOrdinances);
 router.get('/download/:fileName', downloadOrdinance);
+router.post('/update-proceedings/:filename', updateProceedings);
 router.post('/upload/ordinance/draft', file.single('file'), draftOrdinance);
 router.post('/update-ordinance/:fileName', file.single('file'), updateOrdinance);
 router.post('/upload-logo', image.single('file'), uploadLogo);

@@ -108,31 +108,51 @@ td, th {
   padding: 20px;
   margin-bottom: 10px;
   color: white;
+  display: flex;
+  justify-content: space-between;
 }
 
 .Ordinances__Details__Title {
-  margin-top: 20px;
+  font-size: 1.5rem;
   display: flex;
+  flex-direction: column;
 }
 
 .Ordinances__Details__Title__Input {
-  font-size: 1rem;
+  padding: 10px;
+  font-size: 1.5rem;
   border: none;
   background-color: transparent;
   color: white;
+  outline: none;
 }
 
 .Ordinances__Details__Title__Input.editing {
-  border: 1px solid green;
+  padding: 5px;
+  margin: 5px;
   background-color: white;
+  border-radius: 5px;
+  color: black;
+}
+
+.Ordinances__Details__Title__Input.editing > option {
+  font-size: 1.3rem;
+}
+
+.Ordinances__Details__Content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
 }
 
 .Ordinances__Card__Container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex-grow: 1;
-  margin-bottom: 20px;
+  /* flex-grow: 1; */
+  margin-top: 10px;
+  margin-bottom: 10px;
   background-color: gainsboro;
   padding: 20px;
   border-radius: 15px;
@@ -164,14 +184,106 @@ td, th {
   user-select: none;
   cursor: pointer;
 }
-.Ordinances__update__button{
-background-color: var(--orange-color);
+
+.Ordinances__Proceedings {
+  width: 100%;
+}
+
+.Ordinances__Details__Proceedings {
+  background-color: var(--primary-color);
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+.Ordinances__Edit__Button{
+color: var(--orange-color);
+background-color: transparent;
+font-size: 1.3rem;
 border: none;
+cursor: pointer;
 }
-.Ordinances__delete__button{
+
+.Ordinances__Delete__Button{
+  color: var(--error-color);
+  background-color: transparent;
+  font-size: 1.3rem;
   border: none;
-  background-color: var(--error-color);
+  cursor: pointer;
 }
+
 .Ordinances__Upload__button{
   background-color:var(--highlight-color);
+}
+
+.Ordinances__Cancel__Button {
+  /* color: var(--error-color); */
+  margin: 5px;
+  padding: 5px;
+  background-color: gainsboro;
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.Ordinances__Update__Button {
+  color: white;
+  margin: 5px;
+  padding: 5px;
+  background-color: var(--highlight-color);
+  font-size: 1.1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.Ordinances__Minutes__Buttons {
+  display: flex;
+  flex-direction: column;
+  width: 20%;
+}
+
+.Ordinances__Minutes__Add {
+  margin: 5px;
+  background-color: var(--highlight-color);
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+.Ordinances__Minutes__Dropdown {
+  margin: 5px 5px 0px 5px;
+  background-color: var(--secondary-color);
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+}
+
+.Ordinances__Minutes__Buttons > ul {
+  margin: 0px 5px 5px 5px;
+  border: 1px solid var(--secondary-color);
+  border-radius: 5px;
+  padding: 5px;
+  text-align: center;
+  list-style-type: none;
+  cursor: pointer;
+}
+
+.Ordinances__Minutes__List:hover {
+  background-color: gainsboro;
+}
+
+.Ordinances__Delete__Button:hover,
+.Ordinances__Update__Button:hover,
+.Ordinances__Cancel__Button:hover,
+.Ordinances__Edit__Button:hover {
+  transform: scale(1.1);
 }

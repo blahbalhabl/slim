@@ -14,6 +14,7 @@ import Dashboard from "./pages/Dashboard"
 import Unauthorized from "./pages/Unauthorized"
 import Ordinances from "./pages/Ordinances"
 import Profile from "./pages/Profile"
+import Members from "./pages/Members"
 import { roles } from "./utils/userRoles"
 
 import './App.css'
@@ -30,32 +31,33 @@ const level = roles.level;
         <div className="App__Content">
         <Sidebar />
         <Routes>
-        {/* Public routes */}
-        <Route path="/login" element={<Login />} />
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
 
-        {/* Persistent Login Routes */}
-        <Route element={<PersistLogin />}>
-          {/* Public routes with Persistent Login */}
-          <Route path="/unauthorized" element={<Unauthorized />} />
-          
-          {/* Private All Roles Route */}
-          <Route element={<RequireAuth allowedRoles={[role.adn, role.spr, role.usr]}/>}>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/profile/:userId" element={<Profile />} />
-          </Route>
+          {/* Persistent Login Routes */}
+          <Route element={<PersistLogin />}>
+            {/* Public routes with Persistent Login */}
+            <Route path="/unauthorized" element={<Unauthorized />} />
+            
+            {/* Private All Roles Route */}
+            <Route element={<RequireAuth allowedRoles={[role.adn, role.spr, role.usr]}/>}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/profile/:userId" element={<Profile />} />
+              <Route path="/sanggunian-members" element={< Members />} />
+            </Route>
 
-          {/* Private Admin Routes*/}
-          <Route element={<RequireAuth allowedRoles={[role.adn]} />}>
-            <Route path="/records/ordinances/:status" element={<Ordinances />} />
-          </Route>
+            {/* Private Admin Routes*/}
+            <Route element={<RequireAuth allowedRoles={[role.adn]} />}>
+              <Route path="/records/ordinances/:status" element={<Ordinances />} />
+            </Route>
 
-          {/* Private Superadmin Routes */}
-          <Route element={<RequireAuth allowedRoles={[role.spr]} />}>
-            <Route path="/auth/signup" element={<Signup />} />
+            {/* Private Superadmin Routes */}
+            <Route element={<RequireAuth allowedRoles={[role.spr]} />}>
+              <Route path="/auth/signup" element={<Signup />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
           </Route>
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+        </Routes>
         </div>
       </AuthProvider>
     </div>

@@ -140,19 +140,19 @@ const loginUser = async (req, res) => {
     const user = await UserModel.findOne({ email });
 
     if (!user) {
-      return res.status(400).json("User does not exist!");
+      return res.status(400).json({message: "User does not exist!"});
     }
 
     // Compare hash password
     const passMatch = await bcrypt.compare(password, user.password);
 
     if (!passMatch) {
-      return res.status(400).json("Invalid Credentials");
+      return res.status(400).json({message: "Invalid Credentials"});
     }
 
     if (user.is2faOn) {
       // If the user has 2FA enabled, return a flag indicating that 2FA is required
-      return res.status(201).json({ otpRequired: true });
+      return res.status(201).json({ otpRequired: true, message: 'Enter Google Authenticator Code' });
     } else {
       // If 2FA is not required, generate JWT Access Token and Refresh Token
       const accessToken = createAccessToken(user);
@@ -181,7 +181,7 @@ const loginUser = async (req, res) => {
       });
     }
   } catch (err) {
-    return res.status(400).json({ err, msg: "User does not exist" });
+    return res.status(400).json({ err, message: "User does not exist" });
   }
 };
 
