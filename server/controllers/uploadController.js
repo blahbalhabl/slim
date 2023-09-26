@@ -61,6 +61,19 @@ const getOrdinances = async (req, res) => {
   }
 }
 
+const getApprovedOrdinances = async (req, res) => {
+  try {
+    const municipalApproved = await Ordinance.find({ status: 'approved' }).sort({ number: 1 }).exec();
+    const municipalEnacted = await Ordinance.find({ status: 'enacted' }).sort({ number: 1 }).exec();
+    const barangayApproved = await Barangay.find({ status: 'approved' }).sort({ number: 1 }).exec();
+    const barangayEnacted = await Barangay.find({ status: 'enacted' }).sort({ number: 1 }).exec();
+
+    return res.status(200).json({ municipalApproved, municipalEnacted, barangayApproved, barangayEnacted });
+  } catch (err) {
+    return res.status(500).json({err, message: 'Internal Server Error'});
+  }
+}  
+
 const countOrdinances = async (req, res) => {
   try {
     const level = req.query.level;
@@ -216,4 +229,5 @@ module.exports = {
   updateOrdinance,
   downloadOrdinance,
   updateProceedings,
+  getApprovedOrdinances,
 }
