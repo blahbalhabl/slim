@@ -132,15 +132,18 @@ const CreateOrdinances = ({sendRequest}) => {
                 />
               </div>
               <div className="CreateOrdinances__Content">
-                { uploading === true ? (<>
-                  <label htmlFor="file">File:</label>
-                  <input 
-                    className='CreateOrdinances__File'
-                    type="file"
-                    name='file'
-                    id='file'
-                    onChange={handleFileChange} 
-                  /></>) : (
+                { uploading === true ? (
+                  <>
+                    <label htmlFor="file">File:
+                      <input
+                        className='CreateOrdinances__File'
+                        type="file"
+                        name='file'
+                        id='file'
+                        onChange={handleFileChange}
+                      />
+                    </label>
+                  </>) : (
                     <button 
                       className='CreateOrdinances__Button' 
                       onClick={() => setUploading(true)} >

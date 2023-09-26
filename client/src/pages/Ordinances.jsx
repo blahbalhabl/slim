@@ -196,7 +196,7 @@ const Ordinances = () => {
       updateData.append('proceedings', selectedOrdinance.proceedings);
       updateData.append('file', file);
 
-      const res = await axiosPrivate.post(`/update-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`, updateData, {
+      const res = await axiosPrivate.put(`/update-ordinance/${filename}?type=ordinances&level=${auth.level}&series=${series}`, updateData, {
         headers: {'Content-Type': 'multipart/form-data'}
       });
       if(res.status === 200) {
@@ -226,6 +226,7 @@ const Ordinances = () => {
   }
 
   useEffect(() => {
+    document.title = `SLIM | ${status} Ordinances`;
     let isMounted = true;
     setLoading(true)
     sendRequest()
@@ -244,7 +245,7 @@ const Ordinances = () => {
     return () => {
       isMounted = false;
     }
-  },[ status ]); 
+  },[ status, message ]); 
 
   useEffect(() => {
     if (message) {
@@ -305,7 +306,7 @@ const Ordinances = () => {
           { ordinances.length > 0 ? (
               ordinances.map((ordinance, i) => (
                 (ordinance.status === status || status === 'all' && ordinance.accessLevel === auth.level) ? (
-                  <tbody key={i} >
+                  <tbody key={i}>
                   <tr
                     className='Ordinances__Link'
                     style={

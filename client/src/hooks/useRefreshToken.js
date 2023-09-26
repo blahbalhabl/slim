@@ -16,7 +16,7 @@ const useRefreshToken = () => {
         name: res.data.name,
         role: res.data.role,
         level: res.data.level,
-        otp: res.data.is2faOn,
+        otp: res.data.otp,
         token: res.data.token, }
     });
     return res.data.token;

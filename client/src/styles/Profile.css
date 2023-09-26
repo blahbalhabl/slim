@@ -28,6 +28,7 @@
   flex-grow: 1;
   border-radius: 15px;
   box-shadow: 3px 3px 3px #b6b5b5;
+  height: auto;
 }
 
 .Profile__Avatar {
@@ -68,6 +69,10 @@
 
 .Profile__Information > p {
   font-size: 1.2rem;
+}
+
+.Profile__Container__Card {
+  flex-grow: 1;
 }
 
 .Profile__Modal > form {

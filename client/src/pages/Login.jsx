@@ -80,6 +80,7 @@ const Login = () => {
 
   useEffect(() => {
     localStorage.setItem('persist', persist);
+    document.title = 'SLIM | Login';
   },[persist]);
 
   return (

@@ -2,7 +2,7 @@ require("dotenv").config();
 const jwt = require("jsonwebtoken");
 
 const verify = (req, res, next) => {
-  // Get Access Token from httpOnly cookie
+  // Get Access Token from headers
   const accessHeader = req.headers.authorization;
 
   if (!accessHeader) {

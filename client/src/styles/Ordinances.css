@@ -21,20 +21,14 @@
 .Ordinances__Link {
   cursor: pointer;
   user-select: none;
-  border-collapse: separate;
-  border-spacing: 0;
 }
 
 .Ordinances__Link:hover {
   background-color: gainsboro;
   border: none;
-  border-collapse: separate;
-  border-spacing: 0;
 }
 
 .Ordinances__Link:hover td {
-  border-collapse: separate;
-  border-spacing: 0;
   border: none;
 }
 
@@ -43,11 +37,11 @@
   flex-grow: 1;
   background-color: white;
   border-radius: 15px;
+  border-collapse: collapse;
   box-shadow: 3px 3px 3px #b6b5b5;
 }
 
 td, th {
-  /* border: 1px solid #dddddd; */
   text-align: left;
   border: none;
   padding: 10px;
@@ -218,12 +212,12 @@ cursor: pointer;
 }
 
 .Ordinances__Cancel__Button {
-  /* color: var(--error-color); */
+  color: var(--highlight-color);
   margin: 5px;
   padding: 5px;
-  background-color: gainsboro;
+  background-color: white;
   font-size: 1.1rem;
-  border: none;
+  border: 1px solid var(--highlight-color);
   border-radius: 5px;
   cursor: pointer;
 }

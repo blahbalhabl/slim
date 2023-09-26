@@ -17,6 +17,7 @@ const UserProfile = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isButtonVisible, setIsButtonVisible] = useState(false);
   const [imageSrc, setImageSrc] = useState(null);
+  const [audit, setAudit] = useState([]);
   const [serverMessage, setServerMessage] = useState('');
   const [inputs, setInputs] = useState({
     oldpass: "",
@@ -34,9 +35,13 @@ const UserProfile = () => {
   const sendRequest = async () => {
     try {
       const res = await axiosPrivate.get('/user');
+      const audit = await axiosPrivate.get(`/profile-audit/${auth.id}`);
       const data = res.data
+      const auditData = audit.data;
       setIsChecked(data.otp)
-      return data;
+      setAudit(auditData);
+
+      return data ;
     } catch (err) {
       console.log(err);
       return null;
@@ -123,7 +128,14 @@ const UserProfile = () => {
     setIsButtonVisible(false);
   };
 
+  function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+  }
+  
+
   useEffect(() => {
+    document.title = 'SLIM | Profile';
     sendRequest()
     .then((data) => {
       setUser(data);
@@ -187,17 +199,41 @@ const UserProfile = () => {
             <p>{user.role}</p>
           </div>
         </div>
-        <div className="Profile__Card__Right">
-              <h2>Security</h2>
-              <button onClick={openModal}>Change Password</button>
-              <label htmlFor="otp-on">Use Google Authenticator
-              <input
-                type='checkbox'
-                checked={isChecked}
-                id="otp-on"
-                onChange={handleCheckboxChange}
-              />
-              </label>
+        <div className="Profile__Container__Card">
+          <div className="Profile__Card__Right">
+            <h2>Security</h2>
+            <button onClick={openModal}>Change Password</button>
+            <label htmlFor="otp-on">Use Google Authenticator
+            <input
+              type='checkbox'
+              checked={isChecked}
+              id="otp-on"
+               onChange={handleCheckboxChange}
+            />
+            </label>
+          </div>
+          <div className="Profile__Card__Right">
+            <h2>Audit</h2>
+            <table className="Profile__Audit__Table">
+              <thead>
+                <tr>
+                  <th>Event</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                {console.log(audit)}
+                {audit && audit.map((event, i) => {
+                  return (
+                    <tr key={i}>
+                      <td>{event.type}</td>
+                      <td>{formatDate(event.createdAt)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
         <Modal 
           isOpen={isModalOpen}

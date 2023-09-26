@@ -24,7 +24,8 @@ import { faPencil,
   faThumbsUp,
   faCaretRight,
   faHouse,
-  faTrash, } from '@fortawesome/free-solid-svg-icons';
+  faTrash,
+  faPlus, } from '@fortawesome/free-solid-svg-icons';
 
 export const icons = {
   reports: faScroll,
@@ -54,4 +55,5 @@ export const icons = {
   like: faThumbsUp,
   house: faHouse,
   trash: faTrash,
+  plus: faPlus
 };

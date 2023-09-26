@@ -42,7 +42,7 @@ const brgySchema = new mongoose.Schema({
   proceedings: {
     type: Date,
     required: false,
-    default: null,
+    default: Date.now(),
   },
   createdAt: {
     type: Date,

@@ -72,6 +72,9 @@ export const sidebarAccordion = [
       },
     ]
   },
+];
+
+export const sidebarAccordion2 = [
   {
     title: 'Calendar',
     contents: [

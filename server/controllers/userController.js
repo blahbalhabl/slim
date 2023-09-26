@@ -54,6 +54,7 @@ const refreshAccessToken = async (req, res) => {
       name: user.username, 
       role: user.role,
       level: user.level,
+      otp: user.is2faOn,
       token: newAccessToken });
   } catch (err) {
     return res.status(400).json({ msg: "Invalid refresh token" });
@@ -230,7 +231,7 @@ const verifyOTP = async (req, res) => {
         token: accessToken,
       });
     } else {
-      return res.status(400).json("Invalid OTP");
+      return res.status(400).json({message: "Invalid OTP"});
     }
   } catch (err) {
     return res.status(500).json({ err, msg: "Internal Server Error" });

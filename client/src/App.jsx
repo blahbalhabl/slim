@@ -21,6 +21,24 @@ import './App.css'
 
 function App() {
 
+  // document.onkeydown = (e) => {
+  //   if (e.key == 123) {
+  //       e.preventDefault();
+  //   }
+  //   if (e.ctrlKey && e.shiftKey && e.key == 'I') {
+  //       e.preventDefault();
+  //   }
+  //   if (e.ctrlKey && e.shiftKey && e.key == 'C') {
+  //       e.preventDefault();
+  //   }
+  //   if (e.ctrlKey && e.shiftKey && e.key == 'J') {
+  //       e.preventDefault();
+  //   }
+  //   if (e.ctrlKey && e.key == 'U') {
+  //       e.preventDefault();
+  //   }
+  // };
+
 const role = roles.role;
 const level = roles.level;
 
@@ -53,7 +71,7 @@ const level = roles.level;
 
             {/* Private Superadmin Routes */}
             <Route element={<RequireAuth allowedRoles={[role.spr]} />}>
-              <Route path="/auth/signup" element={<Signup />} />
+              <Route path="/users" element={<Signup />} />
             </Route>
             <Route path="*" element={<NotFound />} />
           </Route>

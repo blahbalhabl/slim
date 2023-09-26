@@ -2,6 +2,7 @@ const express = require('express');
 const { Router } = require('express');
 const { verify } = require('../middlewares/verifyToken');
 const { file, image } = require('../middlewares/configureMulter');
+const { auditTrail } = require('../middlewares/auditTrail');
 const {
    draftOrdinance, 
    getOrdinances,
@@ -12,6 +13,7 @@ const {
    updateProceedings,
 } = require('../controllers/uploadController');
 const { uploadLogo } = require('../controllers/avatarController');
+
 const router = Router();
 
 // Apply the verify middleware to this route
@@ -21,11 +23,11 @@ router.use(verify);
 router.use('/uploads/files', express.static('uploads/files'));
 router.get('/ordinances', getOrdinances);
 router.get('/count-ordinances', countOrdinances);
-router.get('/download/:fileName', downloadOrdinance);
-router.post('/update-proceedings/:filename', updateProceedings);
-router.post('/upload/ordinance/draft', file.single('file'), draftOrdinance);
-router.post('/update-ordinance/:fileName', file.single('file'), updateOrdinance);
-router.post('/upload-logo', image.single('file'), uploadLogo);
-router.delete('/delete-ordinance/:fileName', delOrdinance);
+router.get('/download/:fileName', auditTrail, downloadOrdinance);
+router.post('/update-proceedings/:filename', auditTrail, updateProceedings);
+router.post('/upload/ordinance/draft', file.single('file'), auditTrail, draftOrdinance);
+router.put('/update-ordinance/:fileName', file.single('file'), auditTrail, updateOrdinance);
+router.post('/upload-logo', image.single('file'), auditTrail, uploadLogo);
+router.delete('/delete-ordinance/:fileName', auditTrail, delOrdinance);
 
 module.exports = router;
